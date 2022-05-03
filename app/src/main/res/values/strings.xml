@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="search">Išči</string>
+    <string name="use_location">Uporabi mojo lokacijo</string>
+    <string name="search_text">Vnesite mesto ali uporabite lokacijo</string>
+    <string name="search_hint">Primer: Ljubljana…</string>
+    <string name="title">Ali bo dež</string>
+    <string name="city_empty">Mesto ne sme biti prazno!</string>
+    <string name="city_not_found">Mesto ni bilo najdeno.</string>
+</resources>
