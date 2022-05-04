@@ -1,12 +1,10 @@
 package si.uni_lj.fe.weatherapp;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,12 +44,8 @@ public class WeeklyActivity extends AppCompatActivity {
     private void setCurrentDataBinding(String cityName) {
         try {
             Response response = getDailyWeatherResponse(cityName);
-            if (!response.isSuccessful()) {
-                runOnUiThread(() ->
-                        Toast.makeText(WeeklyActivity.this, R.string.city_not_found, Toast.LENGTH_SHORT).show());
-                return;
-            }
-            if (response.body() != null) {
+
+            if (response.isSuccessful() && response.body() != null) {
                 Gson gson = new Gson();
                 CurrentDataModel currentDataModel = gson.fromJson(response.body().string(), CurrentDataModel.class);
                 CurrentData currentData = new CurrentData(currentDataModel);
@@ -67,7 +61,6 @@ public class WeeklyActivity extends AppCompatActivity {
     @SuppressWarnings("SameParameterValue")
     private void setImageResource(int viewId, String imageName, String directory) {
         try {
-
             ImageView view = findViewById(viewId);
             InputStream is = getAssets().open(String.format("%s/%s.png", directory, imageName));
             Drawable drawable = Drawable.createFromStream(is, null);

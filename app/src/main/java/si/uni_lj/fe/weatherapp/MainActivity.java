@@ -8,16 +8,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import si.uni_lj.fe.weatherapp.util.CallbackFuture;
 import si.uni_lj.fe.weatherapp.util.OkHttpSingleton;
 import si.uni_lj.fe.weatherapp.util.UrlBuilder;
 
@@ -36,9 +32,11 @@ public class MainActivity extends AppCompatActivity {
         search.setOnClickListener(this::onSearch);
         useLocation.setOnClickListener(this::onUseLocation);
 
+        /* To check weekly activity */
         EditText searchBar = findViewById(R.id.search_bar);
         searchBar.setText("Ljubljana");
         onSearch(searchBar);
+        /* ************************ */
     }
 
     private void onSearch(View v) {
@@ -50,24 +48,22 @@ public class MainActivity extends AppCompatActivity {
                     .url(UrlBuilder.getGeocodeUrl(searchBar.getText().toString()))
                     .build();
             OkHttpClient client = clientSingleton.getClient();
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                CallbackFuture future = new CallbackFuture();
+                client.newCall(request).enqueue(future);
+                Response response = future.get();
 
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) {
-                    if (!response.isSuccessful()) {
-                        runOnUiThread(() ->
-                                Toast.makeText(MainActivity.this, R.string.city_not_found, Toast.LENGTH_SHORT).show());
-                        return;
-                    }
+                if (!response.isSuccessful()) {
+                    Toast.makeText(this, R.string.city_not_found, Toast.LENGTH_SHORT).show();
+                } else {
                     Intent intent = new Intent(MainActivity.this, WeeklyActivity.class);
                     intent.putExtra("cityName", searchBar.getText().toString());
                     startActivity(intent);
                 }
-            });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
