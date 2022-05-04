@@ -13,6 +13,7 @@ public class UrlBuilder {
                 .addQueryParameter("appid", BuildConfig.API_OPENWEATHER)
                 .addQueryParameter("lat", lat + "")
                 .addQueryParameter("lon", lon + "")
+                .addQueryParameter("lang", "sl")
                 .addQueryParameter("units", "metric");
         return builder.build().toString();
     }
@@ -24,8 +25,8 @@ public class UrlBuilder {
                 .addPathSegments("data/2.5/weather")
                 .addQueryParameter("appid", BuildConfig.API_OPENWEATHER)
                 .addQueryParameter("q", city)
+                .addQueryParameter("lang", "sl")
                 .addQueryParameter("units", "metric");
-        //Log.e("Info", builder.build().toString());
         return builder.build().toString();
     }
 
@@ -37,6 +38,7 @@ public class UrlBuilder {
                 .addQueryParameter("appid", BuildConfig.API_OPENWEATHER)
                 .addQueryParameter("lat", lat + "")
                 .addQueryParameter("lon", lon + "")
+                .addQueryParameter("lang", "sl")
                 .addQueryParameter("units", "metric");
         return builder.build().toString();
     }
@@ -48,6 +50,7 @@ public class UrlBuilder {
                 .addPathSegments("data/2.5/" + forecastType)
                 .addQueryParameter("appid", BuildConfig.API_OPENWEATHER)
                 .addQueryParameter("q", city)
+                .addQueryParameter("lang", "sl")
                 .addQueryParameter("units", "metric");
         return builder.build().toString();
     }
