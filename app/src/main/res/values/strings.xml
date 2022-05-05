@@ -7,6 +7,10 @@
     <string name="title">Ali bo dež</string>
     <string name="city_empty">Mesto ne sme biti prazno!</string>
     <string name="city_not_found">Mesto ni bilo najdeno.</string>
-    <string name="current_weather">Trenutno vreme</string>
+    <string name="current_weather">TRENUTNO VREME</string>
     <string name="feels_like">Čuti se kot</string>
+    <string name="cloudiness">Oblačnost</string>
+    <string name="humidity">Vlažnost</string>
+    <string name="wind">Veter</string>
+    <string name="weekly_forecast">TEDENSKA NAPOVED</string>
 </resources>

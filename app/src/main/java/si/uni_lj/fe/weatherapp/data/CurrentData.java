@@ -34,7 +34,7 @@ public class CurrentData {
         this.tempMax = data.getData().getTempMax();
         this.pressure = data.getData().getPressure();
         this.humidity = data.getData().getHumidity();
-        this.windSpeed = data.getWind().getSpeed();
+        this.windSpeed = (double) Math.round(data.getWind().getSpeed() * 36) / 10;
         this.cloudiness = data.getClouds().getCloudiness();
         this.country = data.getSys().getCountry();
         this.sunrise = data.getSys().getSunrise();
