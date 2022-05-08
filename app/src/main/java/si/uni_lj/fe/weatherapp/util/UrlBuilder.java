@@ -30,6 +30,20 @@ public class UrlBuilder {
         return builder.build().toString();
     }
 
+    private static String getOneCallWeatherUrl(double lat, double lon) {
+        HttpUrl.Builder builder = new HttpUrl.Builder();
+        builder.scheme("https")
+                .host("api.openweathermap.org")
+                .addPathSegments("data/2.5/onecall")
+                .addQueryParameter("appid", BuildConfig.API_OPENWEATHER)
+                .addQueryParameter("lat", lat + "")
+                .addQueryParameter("lon", lon + "")
+                .addQueryParameter("lang", "sl")
+                .addQueryParameter("exclude", "minutely")
+                .addQueryParameter("units", "metric");
+        return builder.build().toString();
+    }
+
     public static String getWeatherUrl(double lat, double lon, Forecast forecastType) {
         HttpUrl.Builder builder = new HttpUrl.Builder();
         builder.scheme("https")
