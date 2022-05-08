@@ -44,31 +44,6 @@ public class UrlBuilder {
         return builder.build().toString();
     }
 
-    public static String getWeatherUrl(double lat, double lon, Forecast forecastType) {
-        HttpUrl.Builder builder = new HttpUrl.Builder();
-        builder.scheme("https")
-                .host("api.openweathermap.org")
-                .addPathSegments("data/2.5/" + forecastType)
-                .addQueryParameter("appid", BuildConfig.API_OPENWEATHER)
-                .addQueryParameter("lat", lat + "")
-                .addQueryParameter("lon", lon + "")
-                .addQueryParameter("lang", "sl")
-                .addQueryParameter("units", "metric");
-        return builder.build().toString();
-    }
-
-    public static String getWeatherUrl(String city, Forecast forecastType) {
-        HttpUrl.Builder builder = new HttpUrl.Builder();
-        builder.scheme("https")
-                .host("api.openweathermap.org")
-                .addPathSegments("data/2.5/" + forecastType)
-                .addQueryParameter("appid", BuildConfig.API_OPENWEATHER)
-                .addQueryParameter("q", city)
-                .addQueryParameter("lang", "sl")
-                .addQueryParameter("units", "metric");
-        return builder.build().toString();
-    }
-
     public static String getGeocodeUrl(String city) {
         HttpUrl.Builder builder = new HttpUrl.Builder();
         builder.scheme("https")
