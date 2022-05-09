@@ -10,18 +10,18 @@
             type="si.uni_lj.fe.weatherapp.data.CurrentData" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:text="LJUBLJANA"
+            android:text="@{currentData.name}"
             android:textColor="@color/black"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -29,11 +29,12 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:id="@+id/current_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_below="@id/city_name"
+            android:layout_marginTop="10dp"
             android:background="@color/lightGrey"
             app:layout_constraintTop_toBottomOf="@id/city_name">
 
@@ -53,8 +54,11 @@
                 android:id="@+id/weather_icon"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
+                android:layout_below="@id/current_weather"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
+                android:contentDescription="@null"
                 android:src="@drawable/logo"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/current_weather" />
@@ -63,9 +67,11 @@
                 android:id="@+id/temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="28dp"
-                android:text="29\u2103"
+                android:layout_toEndOf="@id/weather_icon"
+                android:text="@{currentData.temperature + `\u2103`}"
                 android:textColor="@color/darkBlue"
                 android:textSize="40sp"
                 app:layout_constraintStart_toEndOf="@id/weather_icon"
@@ -77,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="48dp"
+                android:layout_toEndOf="@id/temperature"
                 android:text="@string/feels_like"
                 android:textColor="@color/darkBlue"
                 android:textSize="20sp"
@@ -84,23 +91,29 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/feels_like_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="48dp"
-                android:text="25\u2103"
+                android:layout_marginEnd="32dp"
+                android:text="@{currentData.feelsLike + `\u2103`}"
                 android:textColor="@color/darkBlue"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/feels_like"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="RelativeOverlap" />
 
             <TextView
                 android:id="@+id/cloudiness"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/feels_like"
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="0dp"
+                android:layout_toEndOf="@id/temperature"
                 android:text="@string/cloudiness"
                 android:textColor="@color/darkBlue"
                 android:textSize="20sp"
@@ -108,14 +121,17 @@
                 app:layout_constraintTop_toBottomOf="@id/feels_like" />
 
             <TextView
+                android:id="@+id/cloudiness_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_below="@id/feels_like_value"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="0dp"
-                android:textStyle="bold"
-                android:text="25%"
+                android:layout_marginEnd="32dp"
+                android:text="@{currentData.cloudiness + `%`}"
                 android:textColor="@color/darkBlue"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/feels_like"
                 app:layout_constraintTop_toBottomOf="@id/feels_like" />
 
@@ -123,8 +139,10 @@
                 android:id="@+id/humidity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/cloudiness"
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="0dp"
+                android:layout_toEndOf="@id/temperature"
                 android:text="@string/humidity"
                 android:textColor="@color/darkBlue"
                 android:textSize="20sp"
@@ -132,14 +150,17 @@
                 app:layout_constraintTop_toBottomOf="@id/cloudiness" />
 
             <TextView
+                android:id="@+id/humidity_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_below="@id/cloudiness_value"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="0dp"
-                android:textStyle="bold"
-                android:text="59%"
+                android:layout_marginEnd="32dp"
+                android:text="@{currentData.humidity + `%`}"
                 android:textColor="@color/darkBlue"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/feels_like"
                 app:layout_constraintTop_toBottomOf="@id/cloudiness" />
 
@@ -147,8 +168,10 @@
                 android:id="@+id/wind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/humidity"
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="0dp"
+                android:layout_toEndOf="@id/temperature"
                 android:text="@string/wind"
                 android:textColor="@color/darkBlue"
                 android:textSize="20sp"
@@ -156,10 +179,13 @@
                 app:layout_constraintTop_toBottomOf="@id/humidity" />
 
             <TextView
+                android:id="@+id/wind_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/humidity_value"
+                android:layout_alignParentEnd="true"
                 android:layout_marginEnd="32dp"
-                android:text="5.6m/s"
+                android:text="@{currentData.windSpeed + `km/h`}"
                 android:textColor="@color/darkBlue"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -169,34 +195,44 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_below="@id/weather_icon"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
-                android:text="Soncno"
+                android:text="@{currentData.description}"
                 android:textColor="@color/darkBlue"
                 android:textSize="23sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/weather_icon" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/current_group"
-            app:layout_constraintLeft_toLeftOf="parent">
+            android:layout_below="@id/current_group"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/current_group">
 
             <TextView
+                android:id="@+id/weekly_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textSize="22sp"
                 android:layout_marginTop="16dp"
                 android:text="@string/weekly_forecast"
                 android:textColor="@color/darkBlue"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ListView
+                android:id="@+id/weekly_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/weekly_text"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/weekly_text" />
+        </RelativeLayout>
+    </RelativeLayout>
 </layout>
