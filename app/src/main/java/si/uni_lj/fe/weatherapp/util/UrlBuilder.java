@@ -30,7 +30,7 @@ public class UrlBuilder {
         return builder.build().toString();
     }
 
-    private static String getOneCallWeatherUrl(double lat, double lon) {
+    public static String getOneCallWeatherUrl(double lat, double lon) {
         HttpUrl.Builder builder = new HttpUrl.Builder();
         builder.scheme("https")
                 .host("api.openweathermap.org")

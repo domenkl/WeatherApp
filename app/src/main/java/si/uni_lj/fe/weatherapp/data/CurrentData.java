@@ -10,10 +10,10 @@ public class CurrentData {
     private String icon;
     private String description;
     private String main;
-    private double temperature;
-    private double feelsLike;
-    private double tempMin;
-    private double tempMax;
+    private int temperature;
+    private int feelsLike;
+    private int tempMin;
+    private int tempMax;
     private int pressure;
     private int humidity;
     private double windSpeed;
@@ -28,10 +28,10 @@ public class CurrentData {
         this.icon = data.getWeather().get(0).getIcon();
         this.description = data.getWeather().get(0).getDescription();
         this.main = data.getWeather().get(0).getMain();
-        this.temperature = data.getData().getTemp();
-        this.feelsLike = data.getData().getFeelsLike();
-        this.tempMin = data.getData().getTempMin();
-        this.tempMax = data.getData().getTempMax();
+        this.temperature = (int) Math.round(data.getData().getTemp());
+        this.feelsLike = (int) data.getData().getFeelsLike();
+        this.tempMin = (int) data.getData().getTempMin();
+        this.tempMax = (int) data.getData().getTempMax();
         this.pressure = data.getData().getPressure();
         this.humidity = data.getData().getHumidity();
         this.windSpeed = (double) Math.round(data.getWind().getSpeed() * 36) / 10;
@@ -81,35 +81,35 @@ public class CurrentData {
         this.main = main;
     }
 
-    public double getTemperature() {
+    public int getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(int temperature) {
         this.temperature = temperature;
     }
 
-    public double getFeelsLike() {
+    public int getFeelsLike() {
         return feelsLike;
     }
 
-    public void setFeelsLike(double feelsLike) {
+    public void setFeelsLike(int feelsLike) {
         this.feelsLike = feelsLike;
     }
 
-    public double getTempMin() {
+    public int getTempMin() {
         return tempMin;
     }
 
-    public void setTempMin(double tempMin) {
+    public void setTempMin(int tempMin) {
         this.tempMin = tempMin;
     }
 
-    public double getTempMax() {
+    public int getTempMax() {
         return tempMax;
     }
 
-    public void setTempMax(double tempMax) {
+    public void setTempMax(int tempMax) {
         this.tempMax = tempMax;
     }
 
