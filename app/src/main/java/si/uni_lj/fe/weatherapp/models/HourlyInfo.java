@@ -2,6 +2,8 @@ package si.uni_lj.fe.weatherapp.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class HourlyInfo {
 
@@ -20,7 +22,7 @@ public class HourlyInfo {
     private int cloudiness;
 
     @SerializedName("uvi")
-    private int uviIndex;
+    private double uviIndex;
     private int visibility;
 
     @SerializedName("wind_speed")
@@ -34,7 +36,7 @@ public class HourlyInfo {
 
     private Precipitation rain;
     private Precipitation snow;
-    private Description weather;
+    private List<Weather> weather;
 
     private static class Precipitation {
         @SerializedName("1h")
@@ -42,24 +44,6 @@ public class HourlyInfo {
 
         public double getLastHour() {
             return lastHour;
-        }
-    }
-
-    public static class Description {
-        private String main;
-        private String description;
-        private String icon;
-
-        public String getMain() {
-            return main;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getIcon() {
-            return icon;
         }
     }
 
@@ -95,7 +79,7 @@ public class HourlyInfo {
         return cloudiness;
     }
 
-    public int getUviIndex() {
+    public double getUviIndex() {
         return uviIndex;
     }
 
@@ -123,7 +107,7 @@ public class HourlyInfo {
         return snow;
     }
 
-    public Description getWeather() {
+    public List<Weather> getWeather() {
         return weather;
     }
 }

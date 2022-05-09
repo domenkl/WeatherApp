@@ -2,6 +2,8 @@ package si.uni_lj.fe.weatherapp.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class DailyInfo {
 
@@ -31,13 +33,13 @@ public class DailyInfo {
     @SerializedName("wind_gust")
     private double windGust;
 
-    private Weather weather;
+    private List<Weather> weather;
     private int clouds;
     private double pop;
     private double rain;
     private double uvi;
 
-    private static class Temperature {
+    public static class Temperature {
         private double day;
         private double min;
         private double max;
@@ -145,7 +147,7 @@ public class DailyInfo {
         return windGust;
     }
 
-    public Weather getWeather() {
+    public List<Weather> getWeather() {
         return weather;
     }
 
