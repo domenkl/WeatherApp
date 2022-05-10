@@ -1,10 +1,11 @@
 package si.uni_lj.fe.weatherapp;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,50 +15,47 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import si.uni_lj.fe.weatherapp.adapters.WeeklyAdapter;
 import si.uni_lj.fe.weatherapp.data.CurrentData;
+import si.uni_lj.fe.weatherapp.data.WeeklyData;
 import si.uni_lj.fe.weatherapp.databinding.ActivityWeeklyBinding;
-import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
-import si.uni_lj.fe.weatherapp.util.CallbackFuture;
-import si.uni_lj.fe.weatherapp.util.OkHttpSingleton;
-import si.uni_lj.fe.weatherapp.util.UrlBuilder;
+import si.uni_lj.fe.weatherapp.models.DailyInfo;
+import si.uni_lj.fe.weatherapp.models.OneCallDataModel;
 
 public class WeeklyActivity extends AppCompatActivity {
-
-    private final OkHttpSingleton clientSingleton = OkHttpSingleton.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        String cityName = intent.getStringExtra("cityName");
-        Log.e("App", cityName);
-
-        setCurrentDataBinding(cityName);
+        setCurrentDataBinding();
+        getWeeklyDataAndSetAdapter();
     }
 
-    private void setCurrentDataBinding(String cityName) {
-        try {
-            Response response = getDailyWeatherResponse(cityName);
+    private void setCurrentDataBinding() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String currentDataString = preferences.getString("currentData", "");
+        CurrentData currentData = new Gson().fromJson(currentDataString, CurrentData.class);
+        ActivityWeeklyBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_weekly);
+        binding.setCurrentData(currentData);
 
-            if (response.isSuccessful() && response.body() != null) {
-                Gson gson = new Gson();
-                CurrentDataModel currentDataModel = gson.fromJson(response.body().string(), CurrentDataModel.class);
-                CurrentData currentData = new CurrentData(currentDataModel);
-                ActivityWeeklyBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_weekly);
-                binding.setCurrentData(currentData);
-                setImageResource(R.id.weather_icon, currentData.getIcon(), "weather");
-            }
+        setImageResource(R.id.weather_icon, currentData.getIcon(), "weather");
+    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void getWeeklyDataAndSetAdapter() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String oneCallData = preferences.getString("oneCallData", "");
+        OneCallDataModel oneCallDataModel = new Gson().fromJson(oneCallData, OneCallDataModel.class);
+        List<WeeklyData> weeklyData = new ArrayList<>();
+        for (DailyInfo dailyInfo : oneCallDataModel.getDaily()) {
+            weeklyData.add(new WeeklyData(dailyInfo));
         }
+        setWeeklyAdapter(weeklyData);
     }
+
     @SuppressWarnings("SameParameterValue")
     private void setImageResource(int viewId, String imageName, String directory) {
         try {
@@ -68,16 +66,10 @@ public class WeeklyActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private Response getDailyWeatherResponse(String cityName) throws ExecutionException, InterruptedException {
-        Request request = new Request.Builder()
-                .url(UrlBuilder.getCurrentWeatherUrl(cityName))
-                .build();
-        OkHttpClient client = clientSingleton.getClient();
-        CallbackFuture future = new CallbackFuture();
-        client.newCall(request).enqueue(future);
-        return future.get();
+    private void setWeeklyAdapter(List<WeeklyData> weeklyData) {
+        WeeklyAdapter adapter = new WeeklyAdapter(this, R.layout.weekly_layout, weeklyData);
+        ((ListView) findViewById(R.id.weekly_list)).setAdapter(adapter);
     }
 }
