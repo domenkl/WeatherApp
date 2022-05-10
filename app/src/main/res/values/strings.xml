@@ -13,4 +13,5 @@
     <string name="humidity">Vlažnost</string>
     <string name="wind">Veter</string>
     <string name="weekly_forecast">TEDENSKA NAPOVED</string>
+    <string name="unsuccessful">Poizvedba ni bila uspešna.</string>
 </resources>
