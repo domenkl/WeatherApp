@@ -21,6 +21,8 @@ public class CurrentData {
     private String country;
     private long sunrise;
     private long sunset;
+    private double lat;
+    private double lon;
 
     public CurrentData(CurrentDataModel data) {
         this.name = data.getName();
@@ -39,6 +41,8 @@ public class CurrentData {
         this.country = data.getSys().getCountry();
         this.sunrise = data.getSys().getSunrise();
         this.sunset = data.getSys().getSunset();
+        this.lat = data.getCoordinates().getLatitude();
+        this.lon = data.getCoordinates().getLongitude();
     }
 
     public String getName() {
@@ -167,5 +171,21 @@ public class CurrentData {
 
     public void setSunset(long sunset) {
         this.sunset = sunset;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
     }
 }

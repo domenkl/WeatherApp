@@ -43,14 +43,4 @@ public class UrlBuilder {
                 .addQueryParameter("units", "metric");
         return builder.build().toString();
     }
-
-    public static String getGeocodeUrl(String city) {
-        HttpUrl.Builder builder = new HttpUrl.Builder();
-        builder.scheme("https")
-                .host("api.opencagedata.com")
-                .addPathSegments("geocode/v1/json")
-                .addQueryParameter("q", city)
-                .addQueryParameter("key", BuildConfig.API_OPENCAGEDATA);
-        return builder.build().toString();
-    }
 }
