@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/alert"
+    android:layout_width="match_parent"
+    android:layout_height="110dp"
+    android:layout_below="@id/alerts_text"
+    android:background="@color/white"
+    android:paddingTop="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/alert_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="false"
+            android:layout_marginStart="20dp"
+            android:text="Ponedeljek 15.12"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/alert_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/alert_date"
+            android:layout_centerHorizontal="false"
+            android:layout_marginStart="20dp"
+            android:text="OB 15:00"
+            android:textAllCaps="true"
+            android:textColor="@color/darkGrey"
+            android:textSize="22sp"
+            tools:ignore="HardcodedText" />
+
+
+    </RelativeLayout>
+
+    <ToggleButton
+        android:id="@+id/alert_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/remove"
+        android:paddingVertical="14dp"
+        android:textOff="@string/off"
+        android:textOn="@string/on"
+        android:textSize="22sp"
+        tools:ignore="RelativeOverlap" />
+
+    <Button
+        android:id="@+id/remove"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:background="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <View
+        android:id="@+id/border"
+        style="@style/Divider"
+        android:layout_alignParentBottom="true"
+        android:background="@color/blue" />
+</RelativeLayout>
