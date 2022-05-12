@@ -31,7 +31,7 @@ public class CurrentData {
         this.description = data.getWeather().get(0).getDescription();
         this.main = data.getWeather().get(0).getMain();
         this.temperature = (int) Math.round(data.getData().getTemp());
-        this.feelsLike = (int) data.getData().getFeelsLike();
+        this.feelsLike = (int) Math.round(data.getData().getFeelsLike());
         this.tempMin = (int) data.getData().getTempMin();
         this.tempMax = (int) data.getData().getTempMax();
         this.pressure = data.getData().getPressure();
