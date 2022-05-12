@@ -28,6 +28,7 @@
                 android:value=".MainActivity"
                 />
         </activity>
+        <activity android:name=".AlertsActivity" />
     </application>
 
 </manifest>
