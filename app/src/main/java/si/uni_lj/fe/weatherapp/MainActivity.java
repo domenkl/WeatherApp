@@ -26,12 +26,17 @@ import okhttp3.Response;
 import si.uni_lj.fe.weatherapp.data.CurrentData;
 import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
 import si.uni_lj.fe.weatherapp.util.CallbackFuture;
-import si.uni_lj.fe.weatherapp.util.OkHttpSingleton;
 import si.uni_lj.fe.weatherapp.util.UrlBuilder;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final OkHttpClient client = OkHttpSingleton.getInstance().getClient();
+    private static final OkHttpClient CLIENT;
+
+    static {
+        CLIENT = new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .build();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 CurrentDataModel currentDataModel = gson.fromJson(response.body().string(), CurrentDataModel.class);
                 CurrentData currentData = new CurrentData(currentDataModel);
+                String currentDataJson = gson.toJson(currentData);
 
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = preferences.edit();
-                String json = gson.toJson(currentData);
-                editor.putString("currentData", json);
-                editor.putString("selectedCity", cityName);
-                editor.apply();
-                saveWeeklyDataToSharedPreferences(currentData.getLat(), currentData.getLon());
+                saveCurrentDataToSharedPreferences(currentData, currentDataJson);
 
                 Intent intent = new Intent(MainActivity.this, WeeklyActivity.class);
                 startActivity(intent);
@@ -93,15 +93,24 @@ public class MainActivity extends AppCompatActivity {
                 .url(UrlBuilder.getCurrentWeatherUrl(cityName))
                 .build();
         CallbackFuture future = new CallbackFuture();
-        client.newCall(request).enqueue(future);
+        CLIENT.newCall(request).enqueue(future);
         return future.get();
+    }
+
+    private void saveCurrentDataToSharedPreferences(CurrentData currentData, String currentDataJson) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("currentData", currentDataJson);
+        editor.putString("selectedCity", currentData.getName());
+        editor.apply();
+        saveWeeklyDataToSharedPreferences(currentData.getLat(), currentData.getLon());
     }
 
     private void saveWeeklyDataToSharedPreferences(double lat, double lon) {
         Request request = new Request.Builder()
                 .url(UrlBuilder.getOneCallWeatherUrl(lat, lon))
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        CLIENT.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
