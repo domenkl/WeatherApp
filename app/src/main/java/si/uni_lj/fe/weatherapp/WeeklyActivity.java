@@ -4,8 +4,11 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,6 +73,12 @@ public class WeeklyActivity extends AppCompatActivity {
 
     private void setWeeklyAdapter(List<WeeklyData> weeklyData) {
         WeeklyAdapter adapter = new WeeklyAdapter(this, R.layout.weekly_layout, weeklyData);
-        ((ListView) findViewById(R.id.weekly_list)).setAdapter(adapter);
+        ListView weeklyList = findViewById(R.id.weekly_list);
+        weeklyList.setAdapter(adapter);
+        weeklyList.setOnItemClickListener(this::onItemClick);
+    }
+
+    private void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        Toast.makeText(this, position + "", Toast.LENGTH_SHORT).show();
     }
 }
