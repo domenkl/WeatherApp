@@ -15,4 +15,6 @@
     <string name="weekly_forecast">TEDENSKA NAPOVED</string>
     <string name="unsuccessful">Poizvedba ni bila uspešna.</string>
     <string name="alerts">Opozorila</string>
+    <string name="off">Ugasni</string>
+    <string name="on">Vklopi</string>
 </resources>
