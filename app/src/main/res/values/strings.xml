@@ -17,4 +17,9 @@
     <string name="alerts">Opozorila</string>
     <string name="off">Ugasni</string>
     <string name="on">Vklopi</string>
+    <string name="add_alert">Dodaj opozorilo</string>
+    <string name="set_alert_time">Nastavi čas</string>
+    <string name="set_alert_date">Nastavi datum</string>
+    <string name="select_time">Izberite čas</string>
+    <string name="select_date">Izberite datum</string>
 </resources>
