@@ -22,4 +22,6 @@
     <string name="set_alert_date">Nastavi datum</string>
     <string name="select_time">Izberite čas</string>
     <string name="select_date">Izberite datum</string>
+    <string name="select_city">Izberite mesto</string>
+    <string name="optional">Neobvezno</string>
 </resources>
