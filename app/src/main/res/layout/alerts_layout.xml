@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/alert"
     android:layout_width="match_parent"
     android:layout_height="110dp"
     android:layout_below="@id/alerts_text"
     android:background="@color/white"
-    android:paddingTop="10dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:paddingTop="10dp">
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -62,7 +64,10 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="10dp"
-        android:background="@android:drawable/ic_menu_close_clear_cancel" />
+        android:background="@android:drawable/ic_menu_close_clear_cancel"
+        android:backgroundTint="@color/veryDarkBlue"
+        app:backgroundTint="@null"
+        app:drawableTint="@color/darkBlue" />
 
     <View
         android:id="@+id/border"
