@@ -30,8 +30,6 @@ public class WeeklyAdapter extends ArrayAdapter<WeeklyData> {
         this.mContext = context;
     }
 
-
-
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -53,7 +51,7 @@ public class WeeklyAdapter extends ArrayAdapter<WeeklyData> {
             InputStream is = mContext.getAssets().open(String.format("weather/%s.png", data.getWeatherIcon()));
             Drawable drawable = Drawable.createFromStream(is, null);
             view.setImageDrawable(drawable);
-        }catch (NullPointerException| IOException e) {
+        }catch (NullPointerException | IOException e) {
             e.printStackTrace();
         }
         return convertView;

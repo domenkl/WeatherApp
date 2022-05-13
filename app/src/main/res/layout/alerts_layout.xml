@@ -50,7 +50,7 @@
         android:layout_centerVertical="true"
         android:layout_marginTop="9dp"
         android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/remove"
+        android:layout_toStartOf="@+id/remove_alert"
         android:paddingVertical="14dp"
         android:textOff="@string/off"
         android:textOn="@string/on"
@@ -58,7 +58,7 @@
         tools:ignore="RelativeOverlap" />
 
     <Button
-        android:id="@+id/remove"
+        android:id="@+id/remove_alert"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
