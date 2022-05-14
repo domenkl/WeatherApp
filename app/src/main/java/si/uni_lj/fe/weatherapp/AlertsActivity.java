@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -34,6 +35,8 @@ public class AlertsActivity extends AppCompatActivity {
     private Button setTimeButton, setDateButton;
     private EditText selectedCity;
     private AlertAdapter alertAdapter;
+    private View addAlertView;
+    private boolean dateSet = false, timeSet = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,46 +48,66 @@ public class AlertsActivity extends AppCompatActivity {
         ListView alertsView = findViewById(R.id.alert_items);
         alertsView.setAdapter(alertAdapter);
         addAlerts.setOnClickListener(this::createAddAlertDialog);
+        Locale.setDefault(new Locale("sl", "SI"));
     }
 
     @SuppressLint("InflateParams")
     private void createAddAlertDialog(View view) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        View addAlertView = getLayoutInflater().inflate(R.layout.add_alert_popup, null);
+        addAlertView = getLayoutInflater().inflate(R.layout.add_alert_popup, null);
         dialogBuilder.setView(addAlertView);
+
         dialog = dialogBuilder.create();
         dialog.show();
 
-        Locale.setDefault(new Locale("sl", "SI"));
+        setAlertViewFields();
+    }
+
+    private void setAlertViewFields() {
+        (addAlertView.findViewById(R.id.cancel_alert)).setOnClickListener(this::cancelDialog);
+        (addAlertView.findViewById(R.id.save_alert)).setOnClickListener(this::addAlert);
         setTimeButton = addAlertView.findViewById(R.id.set_alert_time);
         setTimeButton.setOnClickListener(this::openTimePickerDialog);
         setDateButton = addAlertView.findViewById(R.id.set_alert_date);
         setDateButton.setOnClickListener(this::openDatePickerDialog);
         selectedCity = addAlertView.findViewById(R.id.select_city);
-        (addAlertView.findViewById(R.id.cancel_alert)).setOnClickListener(this::cancelDialog);
-        (addAlertView.findViewById(R.id.save_alert)).setOnClickListener(this::addAlert);
     }
 
     private void addAlert(View view) {
+        if (!dateSet || !timeSet) {
+            Toast.makeText(this, R.string.set_time_date, Toast.LENGTH_SHORT).show();
+            return;
+        }
         List<AlertData> alertData = new ArrayList<>();
         SharedPreferences preferences = getSharedPreferences("savedAlerts", MODE_PRIVATE);
         String savedAlerts = preferences.getString("savedAlertsData", null);
         Gson gson = new Gson();
+
         if (savedAlerts != null) {
-            Type type = new TypeToken<List<AlertData>>() {}.getType();
+            Type type = new TypeToken<List<AlertData>>() {
+            }.getType();
             alertData = gson.fromJson(savedAlerts, type);
         }
+
+        alertData.add(createNewAlertData(alertData.size()));
+        alertAdapter.updateAdapter(alertData);
+        cancelDialog(view);
+    }
+
+    private AlertData createNewAlertData(int position) {
         String city = selectedCity.getText().toString();
         if (city.equals("")) city = "Ljubljana";
         LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
         String date = getDate(day, month, year);
         String time = getTime(hour, minute);
-        alertData.add(new AlertData(alertData.size(), localDateTime, date, time, city, true));
-        alertAdapter.updateAdapter(alertData);
-        dialog.dismiss();
+        return new AlertData(position, localDateTime, date, time, city, true);
     }
 
     private void cancelDialog(View view) {
+        (addAlertView.findViewById(R.id.cancel_alert)).setOnClickListener(null);
+        (addAlertView.findViewById(R.id.save_alert)).setOnClickListener(null);
+        dateSet = false;
+        timeSet = false;
         dialog.dismiss();
     }
 
@@ -94,6 +117,7 @@ public class AlertsActivity extends AppCompatActivity {
             hour = timeHour;
             minute = timeMinute;
             setTimeButton.setText(getTime(hour, minute));
+            timeSet = true;
         };
         int style = TimePickerDialog.THEME_HOLO_LIGHT;
         TimePickerDialog timeDialog = new TimePickerDialog(this, style, onTimeSetListener, hour, minute, true);
@@ -108,11 +132,12 @@ public class AlertsActivity extends AppCompatActivity {
             month = mm;
             day = dd;
             setDateButton.setText(String.format(Locale.getDefault(), "%s", getDate(dd, mm, yyyy)));
+            dateSet = true;
         };
         int style = DatePickerDialog.THEME_HOLO_LIGHT;
         DatePickerDialog dateDialog = new DatePickerDialog(this, style, onDateSetListener, year, month, day);
         dateDialog.setTitle(getString(R.string.select_date));
-        dateDialog.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
+        dateDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         dateDialog.show();
     }
 
