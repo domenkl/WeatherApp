@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     private void onSearch(View v) {
@@ -102,10 +101,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void onUseLocation(View v) {
-
     }
 
     private Response getDailyWeatherResponse(String cityName) throws ExecutionException, InterruptedException {
@@ -146,5 +141,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void onUseLocation(View v) {
     }
 }
