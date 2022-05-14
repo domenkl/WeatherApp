@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,10 +52,28 @@ public class MainActivity extends AppCompatActivity {
         useLocation.setOnClickListener(this::onUseLocation);
 
         /* To check weekly activity */
-        EditText searchBar = findViewById(R.id.search_bar);
+        /*EditText searchBar = findViewById(R.id.search_bar);
         searchBar.setText("Ljubljana");
-        onSearch(searchBar);
+        onSearch(searchBar);*/
         /* ************************ */
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.goto_alerts) {
+            Intent intent = new Intent(this, AlertsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 
     private void onSearch(View v) {

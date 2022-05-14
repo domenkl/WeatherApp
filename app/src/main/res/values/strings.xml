@@ -24,4 +24,5 @@
     <string name="select_date">Izberite datum</string>
     <string name="select_city">Izberite mesto</string>
     <string name="optional">Neobvezno</string>
+    <string name="daily_alerts">Dnevna opozorila</string>
 </resources>
