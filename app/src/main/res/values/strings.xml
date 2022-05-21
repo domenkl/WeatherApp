@@ -26,4 +26,5 @@
     <string name="optional">Neobvezno</string>
     <string name="daily_alerts">Dnevna opozorila</string>
     <string name="set_time_date">Nastavite čas in datum.</string>
+    <string name="location_denied">Dostop do lokacije je bil zavrnjen.</string>
 </resources>
