@@ -1,10 +1,15 @@
 package si.uni_lj.fe.weatherapp;
 
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +19,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 
@@ -33,6 +40,9 @@ import si.uni_lj.fe.weatherapp.util.UrlBuilder;
 public class MainActivity extends AppCompatActivity {
 
     private static final OkHttpClient CLIENT;
+    private double longitude, latitude;
+    private boolean permissionGranted = false;
+    private LocationManager locationManager;
 
     static {
         CLIENT = new OkHttpClient.Builder()
@@ -51,11 +61,7 @@ public class MainActivity extends AppCompatActivity {
         search.setOnClickListener(this::onSearch);
         useLocation.setOnClickListener(this::onUseLocation);
 
-        /* To check weekly activity */
-        /*EditText searchBar = findViewById(R.id.search_bar);
-        searchBar.setText("Ljubljana");
-        onSearch(searchBar);*/
-        /* ************************ */
+        checkLocationPermission();
     }
 
     @Override
@@ -75,6 +81,28 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                permissionGranted = true;
+                getAndSetLocation();
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getAndSetLocation() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 20, locationListener);
+    }
+
     private void onSearch(View v) {
         String cityName = ((EditText) findViewById(R.id.search_bar)).getText().toString();
         if (cityName.equals("")) {
@@ -82,30 +110,57 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         try {
-            Response response = getDailyWeatherResponse(cityName);
-            if (!response.isSuccessful()) {
-                Toast.makeText(this, R.string.unsuccessful, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (response.body() != null) {
-                Gson gson = new Gson();
-                CurrentDataModel currentDataModel = gson.fromJson(response.body().string(), CurrentDataModel.class);
-                CurrentData currentData = new CurrentData(currentDataModel);
-                String currentDataJson = gson.toJson(currentData);
-
-                saveCurrentDataToSharedPreferences(currentData, currentDataJson);
-
-                Intent intent = new Intent(MainActivity.this, WeeklyActivity.class);
-                startActivity(intent);
-            }
+            String dailyUrl = UrlBuilder.getCurrentWeatherUrl(cityName);
+            Response response = getWeatherResponse(dailyUrl);
+            handleCurrentDataResponse(response);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private Response getDailyWeatherResponse(String cityName) throws ExecutionException, InterruptedException {
+    private void onUseLocation(View v) {
+        if (!permissionGranted) {
+            Toast.makeText(this, R.string.location_denied, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        double currentLongitude = Math.floor(longitude * 100) / 100;
+        double currentLatitude = Math.floor(latitude * 100) / 100;
+        SharedPreferences sharedPreferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
+        double savedLongitude = Double.longBitsToDouble(sharedPreferences.getLong("savedLongitude", 0L));
+        double savedLatitude = Double.longBitsToDouble(sharedPreferences.getLong("savedLatitude", 0L));
+
+        if (currentLatitude == savedLatitude && currentLongitude == savedLongitude) {
+            startWeeklyActivity();
+            return;
+        }
+        try {
+            String dailyUrl = UrlBuilder.getCurrentWeatherUrl(currentLatitude, currentLongitude);
+            Response response = getWeatherResponse(dailyUrl);
+            handleCurrentDataResponse(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleCurrentDataResponse(Response response) throws IOException {
+        if (!response.isSuccessful()) {
+            Toast.makeText(this, R.string.unsuccessful, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (response.body() != null) {
+            Gson gson = new Gson();
+            CurrentDataModel currentDataModel = gson.fromJson(response.body().string(), CurrentDataModel.class);
+            CurrentData currentData = new CurrentData(currentDataModel);
+            String currentDataJson = gson.toJson(currentData);
+
+            saveCurrentDataToSharedPreferences(currentData, currentDataJson);
+            startWeeklyActivity();
+        }
+    }
+
+    private Response getWeatherResponse(String url) throws ExecutionException, InterruptedException {
         Request request = new Request.Builder()
-                .url(UrlBuilder.getCurrentWeatherUrl(cityName))
+                .url(url)
                 .build();
         CallbackFuture future = new CallbackFuture();
         CLIENT.newCall(request).enqueue(future);
@@ -113,10 +168,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveCurrentDataToSharedPreferences(CurrentData currentData, String currentDataJson) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("currentData", currentDataJson);
-        editor.putString("selectedCity", currentData.getName());
+        editor.putString("savedData", currentDataJson);
+        editor.putLong("savedLongitude", Double.doubleToRawLongBits(currentData.getLon()));
+        editor.putLong("savedLatitude", Double.doubleToRawLongBits(currentData.getLat()));
+        editor.putString("savedCity", currentData.getName());
         editor.apply();
         saveWeeklyDataToSharedPreferences(currentData.getLat(), currentData.getLon());
     }
@@ -134,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.body() != null) {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("oneCallData", response.body().string());
                     editor.apply();
@@ -143,6 +200,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void onUseLocation(View v) {
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            permissionGranted = true;
+            getAndSetLocation();
+        } else {
+            String[] permissions = {/*Manifest.permission.ACCESS_FINE_LOCATION, */Manifest.permission.ACCESS_COARSE_LOCATION};
+            ActivityCompat.requestPermissions(this, permissions, 1);
+        }
     }
+
+    private void startWeeklyActivity() {
+        Intent intent = new Intent(MainActivity.this, WeeklyActivity.class);
+        removeLocationUpdates();
+        startActivity(intent);
+    }
+
+    private void removeLocationUpdates() {
+        locationManager.removeUpdates(locationListener);
+    }
+
+    private final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }
+    };
 }
