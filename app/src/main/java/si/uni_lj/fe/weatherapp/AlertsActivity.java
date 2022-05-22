@@ -74,7 +74,7 @@ public class AlertsActivity extends AppCompatActivity {
     }
 
     private void addAlert(View view) {
-        if (!dateSet || !timeSet) {
+        if (!(dateSet && timeSet)) {
             Toast.makeText(this, R.string.set_time_date, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -84,8 +84,7 @@ public class AlertsActivity extends AppCompatActivity {
         Gson gson = new Gson();
 
         if (savedAlerts != null) {
-            Type type = new TypeToken<List<AlertData>>() {
-            }.getType();
+            Type type = new TypeToken<List<AlertData>>() {}.getType();
             alertData = gson.fromJson(savedAlerts, type);
         }
 
@@ -112,7 +111,6 @@ public class AlertsActivity extends AppCompatActivity {
     }
 
     private void openTimePickerDialog(View view) {
-
         TimePickerDialog.OnTimeSetListener onTimeSetListener = (timePicker, timeHour, timeMinute) -> {
             hour = timeHour;
             minute = timeMinute;
@@ -126,7 +124,6 @@ public class AlertsActivity extends AppCompatActivity {
     }
 
     private void openDatePickerDialog(View view) {
-
         DatePickerDialog.OnDateSetListener onDateSetListener = (datePicker, yyyy, mm, dd) -> {
             year = yyyy;
             month = mm;
