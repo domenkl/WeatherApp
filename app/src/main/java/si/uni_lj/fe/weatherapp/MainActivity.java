@@ -125,14 +125,6 @@ public class MainActivity extends AppCompatActivity {
         }
         double currentLongitude = Math.floor(longitude * 100) / 100;
         double currentLatitude = Math.floor(latitude * 100) / 100;
-        SharedPreferences sharedPreferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
-        double savedLongitude = Double.longBitsToDouble(sharedPreferences.getLong("savedLongitude", 0L));
-        double savedLatitude = Double.longBitsToDouble(sharedPreferences.getLong("savedLatitude", 0L));
-
-        if (currentLatitude == savedLatitude && currentLongitude == savedLongitude) {
-            startWeeklyActivity();
-            return;
-        }
         try {
             String dailyUrl = UrlBuilder.getCurrentWeatherUrl(currentLatitude, currentLongitude);
             Response response = getWeatherResponse(dailyUrl);
@@ -170,12 +162,18 @@ public class MainActivity extends AppCompatActivity {
     private void saveCurrentDataToSharedPreferences(CurrentData currentData, String currentDataJson) {
         SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+        String savedCity = preferences.getString("savedCity", "");
+
         editor.putString("savedData", currentDataJson);
-        editor.putLong("savedLongitude", Double.doubleToRawLongBits(currentData.getLon()));
-        editor.putLong("savedLatitude", Double.doubleToRawLongBits(currentData.getLat()));
         editor.putString("savedCity", currentData.getName());
+        editor.putLong("lastSavedCurrent", System.currentTimeMillis());
         editor.apply();
-        saveWeeklyDataToSharedPreferences(currentData.getLat(), currentData.getLon());
+
+        long lastSaved = preferences.getLong("lastSavedOneCall", 0L);
+
+        if (!(savedCity.equals(currentData.getName())) || (System.currentTimeMillis() - lastSaved) / 1000 / 3600 / 10 >= 1) {
+            saveWeeklyDataToSharedPreferences(currentData.getLat(), currentData.getLon());
+        }
     }
 
     private void saveWeeklyDataToSharedPreferences(double lat, double lon) {
@@ -194,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("oneCallData", response.body().string());
+                    editor.putLong("lastSavedOneCall", System.currentTimeMillis());
                     editor.apply();
                 }
             }
