@@ -39,8 +39,8 @@ public class WeeklyActivity extends AppCompatActivity {
     }
 
     private void setCurrentDataBinding() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String currentDataString = preferences.getString("currentData", "");
+        SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
+        String currentDataString = preferences.getString("savedData", "");
         CurrentData currentData = new Gson().fromJson(currentDataString, CurrentData.class);
         ActivityWeeklyBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_weekly);
         binding.setCurrentData(currentData);
@@ -49,7 +49,7 @@ public class WeeklyActivity extends AppCompatActivity {
     }
 
     private void getWeeklyDataAndSetAdapter() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
         String oneCallData = preferences.getString("oneCallData", "");
         OneCallDataModel oneCallDataModel = new Gson().fromJson(oneCallData, OneCallDataModel.class);
         List<WeeklyData> weeklyData = new ArrayList<>();
