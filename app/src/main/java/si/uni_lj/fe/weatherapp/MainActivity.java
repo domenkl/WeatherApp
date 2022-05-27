@@ -192,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("oneCallData", response.body().string());
+                    editor.putLong("lastSavedOneCall", System.currentTimeMillis());
                     editor.commit();
                     runOnUiThread( () -> startWeeklyActivity());
                 }
