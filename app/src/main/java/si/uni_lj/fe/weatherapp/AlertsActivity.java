@@ -88,12 +88,15 @@ public class AlertsActivity extends AppCompatActivity {
             alertData = gson.fromJson(savedAlerts, type);
         }
 
-        alertData.add(createNewAlertData(alertData.size()));
+        AlertData newAlert = createNewAlertData();
+        alertData.add(newAlert);
+        alertAdapter.addAlertNotification(newAlert);
         alertAdapter.updateAdapter(alertData);
         cancelDialog(view);
     }
 
-    private AlertData createNewAlertData(int position) {
+    private AlertData createNewAlertData() {
+        int position = ((Long)(System.currentTimeMillis() / 10)).intValue();
         String city = selectedCity.getText().toString();
         if (city.equals("")) city = "Ljubljana";
         LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
