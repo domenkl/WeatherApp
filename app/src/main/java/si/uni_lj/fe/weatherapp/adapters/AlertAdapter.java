@@ -71,6 +71,7 @@ public class AlertAdapter extends BaseAdapter {
             ((TextView) convertView.findViewById(R.id.alert_date)).setText(alertData.getDate());
             ((TextView) convertView.findViewById(R.id.alert_time)).setText(alertData.getTime());
             ToggleButton alertToggle = convertView.findViewById(R.id.alert_toggle);
+            alertToggle.setChecked(alertData.isActive());
             alertToggle.setOnClickListener(this::toggleAlert);
             convertView.findViewById(R.id.remove_alert).setOnClickListener(this::removeAlert);
         } catch (Exception e) {
@@ -82,9 +83,11 @@ public class AlertAdapter extends BaseAdapter {
     private void toggleAlert(View view) {
         int position = getPosition(view);
         AlertData data = alertData.get(position);
-        data.setActive(!data.isActive());
-        if (data.isActive()) addAlertNotification(data);
+        boolean toggleActive = !data.isActive();
+        data.setActive(toggleActive);
+        if (toggleActive) addAlertNotification(data);
         else removeAlertNotification(data.getId());
+        updateAlertData();
     }
 
     private void removeAlert(View view) {
