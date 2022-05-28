@@ -100,7 +100,7 @@ public class AlertsActivity extends AppCompatActivity {
         String city = selectedCity.getText().toString();
         if (city.equals("")) city = "Ljubljana";
         LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
-        String date = getDate(day, month, year);
+        String date = getDate(year, month, day);
         String time = getTime(hour, minute);
         return new AlertData(position, localDateTime, date, time, city, true);
     }
@@ -129,9 +129,9 @@ public class AlertsActivity extends AppCompatActivity {
     private void openDatePickerDialog(View view) {
         DatePickerDialog.OnDateSetListener onDateSetListener = (datePicker, yyyy, mm, dd) -> {
             year = yyyy;
-            month = mm;
+            month = mm + 1;
             day = dd;
-            setDateButton.setText(String.format(Locale.getDefault(), "%s", getDate(dd, mm, yyyy)));
+            setDateButton.setText(String.format(Locale.getDefault(), "%s", getDate(year, month, day)));
             dateSet = true;
         };
         int style = DatePickerDialog.THEME_HOLO_LIGHT;
@@ -141,8 +141,8 @@ public class AlertsActivity extends AppCompatActivity {
         dateDialog.show();
     }
 
-    private String getDate(int dd, int mm, int yyyy) {
-        LocalDateTime date = LocalDateTime.of(yyyy, mm + 1, dd, 10, 0);
+    private String getDate(int yyyy, int mm, int dd) {
+        LocalDateTime date = LocalDateTime.of(yyyy, mm, dd, 10, 0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd.MM.yyyy");
         return formatter.format(date);
     }
