@@ -15,8 +15,8 @@
     <string name="weekly_forecast">TEDENSKA NAPOVED</string>
     <string name="unsuccessful">Poizvedba ni bila uspešna.</string>
     <string name="alerts">Opozorila</string>
-    <string name="off">Ugasni</string>
-    <string name="on">Vklopi</string>
+    <string name="turn_off">Ugasni</string>
+    <string name="turn_on">Vklopi</string>
     <string name="add_alert">Dodaj opozorilo</string>
     <string name="set_alert_time">Nastavi čas</string>
     <string name="set_alert_date">Nastavi datum</string>
