@@ -14,6 +14,7 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="veryDarkBlue">#00011f</color>
     <color name="ellipse">#6687FF</color>
-    <color name="main_background">#CAD2FF</color>
+    <color name="main_background">#C1DAFF</color>
     <color name="title_blue">#00061B</color>
+    <color name="semi_transparent">#00000030</color>
 </resources>
