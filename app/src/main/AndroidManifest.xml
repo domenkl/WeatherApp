@@ -24,21 +24,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WeeklyActivity"
+        <activity
+            android:name=".WeeklyActivity"
             android:parentActivityName=".MainActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"
-                />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
-        <activity android:name=".AlertsActivity"
+        <activity
+            android:name=".DailyActivity"
+            android:parentActivityName=".WeeklyActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WeeklyActivity" />
+        </activity>
+        <activity
+            android:name=".AlertsActivity"
             android:parentActivityName=".MainActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
-        <receiver android:name=".services.AlertReceiver"
-            android:exported="false">
-        </receiver>
+        <receiver
+            android:name=".services.AlertReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>
