@@ -17,4 +17,6 @@
     <color name="main_background">#C1DAFF</color>
     <color name="title_blue">#00061B</color>
     <color name="semi_transparent">#00000030</color>
+    <color name="turquoise">#257681</color>
+    <color name="light_sky_blue">#AEC0FF</color>
 </resources>

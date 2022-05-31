@@ -7,13 +7,13 @@
     <string name="title">Ali bo dež</string>
     <string name="city_empty">Mesto ne sme biti prazno!</string>
     <string name="city_not_found">Mesto ni bilo najdeno.</string>
-    <string name="current_weather">TRENUTNO VREME</string>
+    <string name="current_weather">TRENUTNA NAPOVED</string>
     <string name="feels_like">Čuti se kot</string>
     <string name="cloudiness">Oblačnost</string>
     <string name="humidity">Vlažnost</string>
     <string name="wind">Veter</string>
     <string name="weekly_forecast">TEDENSKA NAPOVED</string>
-    <string name="unsuccessful">Poizvedba ni bila uspešna.</string>
+    <string name="unsuccessful">Mesto ni bilo najdeno.</string>
     <string name="alerts">Opozorila</string>
     <string name="turn_off">Ugasni</string>
     <string name="turn_on">Vklopi</string>
@@ -27,4 +27,10 @@
     <string name="daily_alerts">Dnevna opozorila</string>
     <string name="set_time_date">Nastavite čas in datum.</string>
     <string name="location_denied">Dostop do lokacije je bil zavrnjen.</string>
+    <string name="weather_for">Vremenska napoved za</string>
+    <string name="precipitation">Padavine</string>
+    <string name="precipitation_unit">mm</string>
+    <string name="uvi_index">UVI indeks</string>
+    <string name="visibility">Vidljivost</string>
+    <string name="pressure">Tlak</string>
 </resources>
