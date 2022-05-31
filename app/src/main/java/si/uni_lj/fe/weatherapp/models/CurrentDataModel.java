@@ -8,7 +8,7 @@ import java.util.List;
 public class CurrentDataModel {
 
     private String name;
-    private int timezone;
+    private String timezone;
 
     @SerializedName("coord")
     private Coordinates coordinates;
@@ -114,7 +114,7 @@ public class CurrentDataModel {
         return name;
     }
 
-    public int getTimezone() {
+    public String getTimezone() {
         return timezone;
     }
 

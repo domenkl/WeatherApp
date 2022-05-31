@@ -7,7 +7,6 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class HourlyInfo {
 
-
     private long dt;
     private long sunrise;
     private long sunset;
@@ -38,7 +37,7 @@ public class HourlyInfo {
     private Precipitation snow;
     private List<Weather> weather;
 
-    private static class Precipitation {
+    public static class Precipitation {
         @SerializedName("1h")
         private double lastHour;
 
