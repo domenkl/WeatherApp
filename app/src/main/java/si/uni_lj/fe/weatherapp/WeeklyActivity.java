@@ -1,68 +1,73 @@
 package si.uni_lj.fe.weatherapp;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import si.uni_lj.fe.weatherapp.adapters.WeeklyAdapter;
+import si.uni_lj.fe.weatherapp.adapters.HourlyAdapter;
 import si.uni_lj.fe.weatherapp.data.CurrentData;
-import si.uni_lj.fe.weatherapp.data.WeeklyData;
+import si.uni_lj.fe.weatherapp.data.HourlyData;
 import si.uni_lj.fe.weatherapp.databinding.ActivityWeeklyBinding;
-import si.uni_lj.fe.weatherapp.models.DailyInfo;
+import si.uni_lj.fe.weatherapp.models.HourlyInfo;
 import si.uni_lj.fe.weatherapp.models.OneCallDataModel;
 
 public class WeeklyActivity extends AppCompatActivity {
+
+    private OneCallDataModel oneCallDataModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setCurrentDataBinding();
-        getWeeklyDataAndSetAdapter();
+        convertAndSetHourlyAdapter();
     }
 
     private void setCurrentDataBinding() {
         SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
-        String currentDataString = preferences.getString("savedData", "");
-        CurrentData currentData = new Gson().fromJson(currentDataString, CurrentData.class);
+        String oneCallDataString = preferences.getString("oneCallData", "");
+        String city = preferences.getString("savedCity", "");
+        String country = preferences.getString("savedCountry", "");
+
+        oneCallDataModel = new Gson().fromJson(oneCallDataString, OneCallDataModel.class);
         ActivityWeeklyBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_weekly);
+        CurrentData currentData = new CurrentData(oneCallDataModel, city, country);
         binding.setCurrentData(currentData);
 
-        setImageResource(R.id.weather_icon, currentData.getIcon(), "weather");
+        setImageResource(this, R.id.weather_icon, currentData.getIcon());
     }
 
-    private void getWeeklyDataAndSetAdapter() {
-        SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
-        String oneCallData = preferences.getString("oneCallData", "");
-        OneCallDataModel oneCallDataModel = new Gson().fromJson(oneCallData, OneCallDataModel.class);
-        List<WeeklyData> weeklyData = new ArrayList<>();
-        for (DailyInfo dailyInfo : oneCallDataModel.getDaily()) {
-            weeklyData.add(new WeeklyData(dailyInfo));
+    private void convertAndSetHourlyAdapter() {
+        List<HourlyData> hourlyData = new ArrayList<>();
+        ZoneId zoneOfLocation = ZoneId.of(oneCallDataModel.getTimezone());
+        for (HourlyInfo hourlyInfo : oneCallDataModel.getHourly()) {
+            hourlyData.add(new HourlyData(hourlyInfo, zoneOfLocation));
         }
-        setWeeklyAdapter(weeklyData);
+        setHourlyAdapter(hourlyData);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void setImageResource(int viewId, String imageName, String directory) {
+    private void setImageResource(Context context, int viewId, String imageName) {
         try {
             ImageView view = findViewById(viewId);
-            InputStream is = getAssets().open(String.format("%s/%s.png", directory, imageName));
+            InputStream is = context.getAssets().open(String.format("weather/%s.png", imageName));
             Drawable drawable = Drawable.createFromStream(is, null);
             view.setImageDrawable(drawable);
         } catch (IOException e) {
@@ -70,14 +75,13 @@ public class WeeklyActivity extends AppCompatActivity {
         }
     }
 
-    private void setWeeklyAdapter(List<WeeklyData> weeklyData) {
-        WeeklyAdapter adapter = new WeeklyAdapter(this, R.layout.weekly_layout, weeklyData);
-        ListView weeklyList = findViewById(R.id.weekly_list);
-        weeklyList.setAdapter(adapter);
-        weeklyList.setOnItemClickListener(this::onItemClick);
-    }
-
-    private void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        Toast.makeText(this, position + "", Toast.LENGTH_SHORT).show();
+    private void setHourlyAdapter(List<HourlyData> hourlyData) {
+        RecyclerView recyclerView = findViewById(R.id.hourly_view);
+        HourlyAdapter hourlyAdapter = new HourlyAdapter(hourlyData, this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(hourlyAdapter);
     }
 }

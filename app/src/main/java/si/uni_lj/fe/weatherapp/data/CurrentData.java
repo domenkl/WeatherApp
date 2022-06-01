@@ -1,191 +1,116 @@
 package si.uni_lj.fe.weatherapp.data;
 
-import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
+import android.util.Log;
 
-@SuppressWarnings("unused")
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
+import si.uni_lj.fe.weatherapp.models.HourlyInfo;
+import si.uni_lj.fe.weatherapp.models.OneCallDataModel;
+
 public class CurrentData {
 
-    private String name;
-    private int timezone;
-    private String icon;
-    private String description;
-    private String main;
-    private int temperature;
-    private int feelsLike;
-    private int tempMin;
-    private int tempMax;
-    private int pressure;
-    private int humidity;
-    private double windSpeed;
-    private int cloudiness;
-    private String country;
-    private long sunrise;
-    private long sunset;
-    private double lat;
-    private double lon;
+    private final String city;
+    private final String country;
+    private final String localTime;
+    private final String icon;
+    private final String description;
+    private final int temperature;
+    private final int pressure;
+    private final int humidity;
+    private final String windSpeed;
+    private final int cloudiness;
+    private final String precipitation;
+    private final String uviIndex;
+    private final String visibility;
 
-    public CurrentData(CurrentDataModel data) {
-        this.name = data.getName();
-        this.timezone = data.getTimezone();
+    public CurrentData(OneCallDataModel oneCallData, String city, String country) {
+        HourlyInfo data = oneCallData.getCurrent();
+        this.city = city;
+        this.country = country;
+        this.localTime = setLocalTime(oneCallData.getTimezone());
+        this.temperature = (int) Math.round(data.getTemp());
         this.icon = data.getWeather().get(0).getIcon();
-        this.description = data.getWeather().get(0).getDescription();
-        this.main = data.getWeather().get(0).getMain();
-        this.temperature = (int) Math.round(data.getData().getTemp());
-        this.feelsLike = (int) Math.round(data.getData().getFeelsLike());
-        this.tempMin = (int) data.getData().getTempMin();
-        this.tempMax = (int) data.getData().getTempMax();
-        this.pressure = data.getData().getPressure();
-        this.humidity = data.getData().getHumidity();
-        this.windSpeed = (double) Math.round(data.getWind().getSpeed() * 36) / 10;
-        this.cloudiness = data.getClouds().getCloudiness();
-        this.country = data.getSys().getCountry();
-        this.sunrise = data.getSys().getSunrise();
-        this.sunset = data.getSys().getSunset();
-        this.lat = data.getCoordinates().getLatitude();
-        this.lon = data.getCoordinates().getLongitude();
+        this.precipitation = setPrecipitation(data);
+        this.description = setDescription(data.getWeather().get(0).getDescription());
+        this.cloudiness = data.getCloudiness();
+        this.windSpeed = (double) Math.round(data.getWindSpeed() * 36) / 10 + "km/h";
+        this.humidity = data.getHumidity();
+        this.uviIndex = data.getUviIndex() + "";
+        this.visibility = (double)(data.getVisibility() / 100) / 10 + "";
+        this.pressure = data.getPressure();
     }
 
-    public String getName() {
-        return name;
+    private String setDescription(String description) {
+        return description.substring(0, 1).toUpperCase() + description.substring(1);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    private String setLocalTime(String timezone) {
+        Log.i("Timezone", timezone);
+        ZoneId zoneId = ZoneId.of(timezone);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        Instant instant = Instant.now();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+        return dateTimeFormatter.format(localDateTime);
     }
 
-    public int getTimezone() {
-        return timezone;
+    private String setPrecipitation(HourlyInfo info) {
+        if (info.getRain() != null) return info.getRain().getLastHour() + "";
+        if (info.getSnow() != null) return info.getSnow().getLastHour() + "";
+        return "0.0";
     }
 
-    public void setTimezone(int timezone) {
-        this.timezone = timezone;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getMain() {
-        return main;
-    }
-
-    public void setMain(String main) {
-        this.main = main;
-    }
-
-    public int getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
-    }
-
-    public int getFeelsLike() {
-        return feelsLike;
-    }
-
-    public void setFeelsLike(int feelsLike) {
-        this.feelsLike = feelsLike;
-    }
-
-    public int getTempMin() {
-        return tempMin;
-    }
-
-    public void setTempMin(int tempMin) {
-        this.tempMin = tempMin;
-    }
-
-    public int getTempMax() {
-        return tempMax;
-    }
-
-    public void setTempMax(int tempMax) {
-        this.tempMax = tempMax;
-    }
-
-    public int getPressure() {
-        return pressure;
-    }
-
-    public void setPressure(int pressure) {
-        this.pressure = pressure;
-    }
-
-    public int getHumidity() {
-        return humidity;
-    }
-
-    public void setHumidity(int humidity) {
-        this.humidity = humidity;
-    }
-
-    public double getWindSpeed() {
-        return windSpeed;
-    }
-
-    public void setWindSpeed(double windSpeed) {
-        this.windSpeed = windSpeed;
-    }
-
-    public int getCloudiness() {
-        return cloudiness;
-    }
-
-    public void setCloudiness(int cloudiness) {
-        this.cloudiness = cloudiness;
+    public String getCity() {
+        return city;
     }
 
     public String getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public String getLocalTime() {
+        return localTime;
     }
 
-    public long getSunrise() {
-        return sunrise;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setSunrise(long sunrise) {
-        this.sunrise = sunrise;
+    public String getDescription() {
+        return description;
     }
 
-    public long getSunset() {
-        return sunset;
+    public int getTemperature() {
+        return temperature;
     }
 
-    public void setSunset(long sunset) {
-        this.sunset = sunset;
+    public int getPressure() {
+        return pressure;
     }
 
-    public double getLat() {
-        return lat;
+    public int getHumidity() {
+        return humidity;
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
+    public String getWindSpeed() {
+        return windSpeed;
     }
 
-    public double getLon() {
-        return lon;
+    public int getCloudiness() {
+        return cloudiness;
     }
 
-    public void setLon(double lon) {
-        this.lon = lon;
+    public String getPrecipitation() {
+        return precipitation;
+    }
+
+    public String getUviIndex() {
+        return uviIndex;
+    }
+
+    public String getVisibility() {
+        return visibility;
     }
 }

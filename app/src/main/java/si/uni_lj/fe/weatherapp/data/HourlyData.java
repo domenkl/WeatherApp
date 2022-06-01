@@ -45,8 +45,8 @@ public class HourlyData {
     }
 
     private String setPrecipitation(HourlyInfo info) {
-        if (info.getRain() != null) return info.getRain().getLastHour() + "";
-        if (info.getSnow() != null) return info.getSnow().getLastHour() + "";
-        return "0.0";
+        if (info.getRain() != null) return (int)(info.getRain().getLastHour() * 100) + "%";
+        if (info.getSnow() != null) return (int)(info.getSnow().getLastHour() * 100) + "%";
+        return "0%";
     }
 }
