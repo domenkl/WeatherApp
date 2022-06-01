@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             removeLocationUpdates();
             String currentCity = currentDataModel.getName();
 
-            saveInfoAndCheckLastUpdated(currentCity);
+            saveAndCheckInNewThread(currentCity);
         }
     }
 
@@ -160,17 +160,24 @@ public class MainActivity extends AppCompatActivity {
         }
         longitude = Math.floor(longitude * 100) / 100;
         latitude = Math.floor(latitude * 100) / 100;
-        try {
-            saveInfoAndCheckLastUpdated(null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveAndCheckInNewThread(null);
+    }
+
+    private void saveAndCheckInNewThread(String currentCity) {
+        new Thread(() -> {
+            try {
+                saveInfoAndCheckLastUpdated(currentCity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void saveInfoAndCheckLastUpdated(String currentCity) throws IOException {
         Address address = getAddressFromCoordinates(latitude, longitude);
-        String currentCountry = address.getAddressLine(2);
-        currentCity = currentCity == null ? address.getAddressLine(0) : currentCity;
+        String currentCountry = address.getCountryCode();
+        String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
+        currentCity = currentCity != null ? currentCity : addressCity;
 
         SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -196,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
             saveWeeklyDataToSharedPreferences();
             return;
         }
-        startWeeklyActivity();
+        runOnUiThread(this::startWeeklyActivity);
     }
 
     private void saveWeeklyDataToSharedPreferences() {
@@ -230,13 +237,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             permissionGranted = true;
             getAndSetLocation();
         } else {
-            String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION};
+            String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
             ActivityCompat.requestPermissions(this, permissions, 1);
         }
     }
@@ -256,6 +262,10 @@ public class MainActivity extends AppCompatActivity {
         public void onLocationChanged(@NonNull Location location) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
+        }
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            //override super for no error
         }
     };
 
