@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="125dp"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    tools:ignore="HardcodedText">
+
+
+    <TextView
+        android:id="@+id/day_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/inter"
+        android:text="12:00"
+        android:textColor="@color/black"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/day_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/day_time"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-7dp"
+        android:fontFamily="@font/inter"
+        android:text="25\u2103"
+        android:textColor="@color/turquoise"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/day_weather"
+        android:layout_width="67dp"
+        android:layout_height="65dp"
+        android:layout_below="@id/day_temp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:contentDescription="_01d_2"
+        android:src="@drawable/w01d" />
+
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/day_weather"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/raindrop_icon"
+            android:layout_width="20dp"
+            android:layout_gravity="center"
+            android:layout_height="20dp"
+            android:contentDescription="raindrop_2"
+            android:src="@drawable/raindrop"
+            />
+
+        <TextView
+            android:id="@+id/precipitation_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
+            android:layout_marginStart="5dp"
+            android:text="100%"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+</RelativeLayout>
+

@@ -33,4 +33,5 @@
     <string name="uvi_index">UVI indeks</string>
     <string name="visibility">Vidljivost</string>
     <string name="pressure">Tlak</string>
+    <string name="hourly_forecast">NAPOVED PO URAH</string>
 </resources>

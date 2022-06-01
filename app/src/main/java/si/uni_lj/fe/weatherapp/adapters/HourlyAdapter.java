@@ -32,7 +32,7 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.weekly_layout, parent, false);
+                .inflate(R.layout.hourly_layout, parent, false);
         return new ViewHolder(itemView);
     }
 
