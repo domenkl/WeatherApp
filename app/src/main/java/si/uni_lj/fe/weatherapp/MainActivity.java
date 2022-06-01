@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             removeLocationUpdates();
             String currentCity = currentDataModel.getName();
 
-            saveAndCheckInNewThread(currentCity);
+            getAndSaveLocationAsync(currentCity);
         }
     }
 
@@ -160,35 +160,27 @@ public class MainActivity extends AppCompatActivity {
         }
         longitude = Math.floor(longitude * 100) / 100;
         latitude = Math.floor(latitude * 100) / 100;
-        saveAndCheckInNewThread(null);
+        getAndSaveLocationAsync(null);
     }
 
-    private void saveAndCheckInNewThread(String currentCity) {
+    private void getAndSaveLocationAsync(String currentCity) {
         new Thread(() -> {
             try {
-                saveInfoAndCheckLastUpdated(currentCity);
+                getAndSaveLocation(currentCity);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
-    private void saveInfoAndCheckLastUpdated(String currentCity) throws IOException {
+    private void getAndSaveLocation(String currentCity) throws IOException {
         Address address = getAddressFromCoordinates(latitude, longitude);
         String currentCountry = address.getCountryCode();
         String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
         currentCity = currentCity != null ? currentCity : addressCity;
 
-        SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        String savedCity = preferences.getString("savedCity", "");
-        long lastSaved = preferences.getLong("lastSavedOneCall", 0L);
-
-        editor.putString("savedCity", currentCity);
-        editor.putString("savedCountry", currentCountry);
-        editor.apply();
-
-        checkLastUpdated(savedCity, currentCity, lastSaved);
+        saveCityAndCountry(currentCity, currentCountry);
+        saveWeeklyDataToSharedPreferences();
     }
 
     private Address getAddressFromCoordinates(double lat, double lon) throws IOException {
@@ -197,13 +189,12 @@ public class MainActivity extends AppCompatActivity {
         return addresses.get(0);
     }
 
-    private void checkLastUpdated(String savedCity, String currentCity, long lastSaved) {
-        boolean hasDayPassed = (System.currentTimeMillis() - lastSaved) / 1000 / 3600 / 10 >= 1;
-        if (!(savedCity.equals(currentCity)) || hasDayPassed) {
-            saveWeeklyDataToSharedPreferences();
-            return;
-        }
-        runOnUiThread(this::startWeeklyActivity);
+    private void saveCityAndCountry(String currentCity, String currentCountry) {
+        SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("savedCity", currentCity);
+        editor.putString("savedCountry", currentCountry);
+        editor.apply();
     }
 
     private void saveWeeklyDataToSharedPreferences() {
@@ -265,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            //override super for no error
+            //override super to get rid of error
         }
     };
 
