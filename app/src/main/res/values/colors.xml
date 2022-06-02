@@ -19,4 +19,6 @@
     <color name="semi_transparent">#00000030</color>
     <color name="turquoise">#257681</color>
     <color name="light_sky_blue">#AEC0FF</color>
+    <color name="grey">#9B9B9B</color>
+    <color name="green">#1AB534</color>
 </resources>

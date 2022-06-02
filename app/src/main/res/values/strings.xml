@@ -14,10 +14,10 @@
     <string name="wind">Veter</string>
     <string name="weekly_forecast">TEDENSKA NAPOVED</string>
     <string name="unsuccessful">Mesto ni bilo najdeno.</string>
-    <string name="alerts">Opozorila</string>
+    <string name="alerts">Obvestila</string>
     <string name="turn_off">Ugasni</string>
     <string name="turn_on">Vklopi</string>
-    <string name="add_alert">Dodaj opozorilo</string>
+    <string name="add_alert">Dodaj obvestilo</string>
     <string name="set_alert_time">Nastavi čas</string>
     <string name="set_alert_date">Nastavi datum</string>
     <string name="select_time">Izberite čas</string>
@@ -34,4 +34,9 @@
     <string name="visibility">Vidljivost</string>
     <string name="pressure">Tlak</string>
     <string name="hourly_forecast">NAPOVED PO URAH</string>
+    <string name="repeat">Ponavljaj</string>
+    <string name="once">Enkrat</string>
+    <string name="daily">Vsak dan</string>
+    <string name="custom">Po meri</string>
+    <string name="using_location">Uporabljena bo vaša lokacija</string>
 </resources>
