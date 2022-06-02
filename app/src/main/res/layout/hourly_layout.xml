@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="125dp"
+    android:layout_width="100dp"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     tools:ignore="HardcodedText">
@@ -67,7 +67,12 @@
             android:text="100%"
             android:textColor="@color/black"
             android:textSize="17sp" />
-
     </LinearLayout>
+    <View
+        android:id="@+id/border"
+        style="@style/horizontalDivider"
+        android:layout_alignParentEnd="true"
+        android:layout_height="165dp"
+        android:background="@color/blue" />
 </RelativeLayout>
 

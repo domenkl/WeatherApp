@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import si.uni_lj.fe.weatherapp.models.HourlyInfo;
 
@@ -38,15 +39,16 @@ public class HourlyData {
     }
 
     private String setTime(long dt, ZoneId zoneId) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        Locale.setDefault(new Locale("sl", "SI"));
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("eee HH:mm");
         Instant instant = Instant.ofEpochSecond(dt);
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
         return dateTimeFormatter.format(localDateTime);
     }
 
     private String setPrecipitation(HourlyInfo info) {
-        if (info.getRain() != null) return (int)(info.getRain().getLastHour() * 100) + "%";
-        if (info.getSnow() != null) return (int)(info.getSnow().getLastHour() * 100) + "%";
-        return "0%";
+        if (info.getRain() != null) return (info.getRain().getLastHour()) + "mm";
+        if (info.getSnow() != null) return (info.getSnow().getLastHour()) + "mm";
+        return "0mm";
     }
 }
