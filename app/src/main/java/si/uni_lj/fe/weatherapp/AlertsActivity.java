@@ -1,26 +1,24 @@
 package si.uni_lj.fe.weatherapp;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,12 +29,11 @@ import si.uni_lj.fe.weatherapp.data.AlertData;
 public class AlertsActivity extends AppCompatActivity {
 
     private AlertDialog dialog;
-    private int hour, minute, year, month, day;
-    private Button setTimeButton, setDateButton;
+    private boolean isDaily;
+    private TimePicker timePicker;
     private EditText selectedCity;
     private AlertAdapter alertAdapter;
     private View addAlertView;
-    private boolean dateSet = false, timeSet = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,18 +63,14 @@ public class AlertsActivity extends AppCompatActivity {
     private void setAlertViewFields() {
         (addAlertView.findViewById(R.id.cancel_alert)).setOnClickListener(this::cancelDialog);
         (addAlertView.findViewById(R.id.save_alert)).setOnClickListener(this::addAlert);
-        setTimeButton = addAlertView.findViewById(R.id.set_alert_time);
-        setTimeButton.setOnClickListener(this::openTimePickerDialog);
-        setDateButton = addAlertView.findViewById(R.id.set_alert_date);
-        setDateButton.setOnClickListener(this::openDatePickerDialog);
         selectedCity = addAlertView.findViewById(R.id.select_city);
+        timePicker = addAlertView.findViewById(R.id.time_picker);
+        timePicker.setIs24HourView(true);
+        MaterialButtonToggleGroup toggleButton = addAlertView.findViewById(R.id.repeat_group);
+        toggleButton.addOnButtonCheckedListener(this::onButtonChecked);
     }
 
     private void addAlert(View view) {
-        if (!(dateSet && timeSet)) {
-            Toast.makeText(this, R.string.set_time_date, Toast.LENGTH_SHORT).show();
-            return;
-        }
         List<AlertData> alertData = new ArrayList<>();
         SharedPreferences preferences = getSharedPreferences("savedAlerts", MODE_PRIVATE);
         String savedAlerts = preferences.getString("savedAlertsData", null);
@@ -96,58 +89,23 @@ public class AlertsActivity extends AppCompatActivity {
     }
 
     private AlertData createNewAlertData() {
-        int position = ((Long)(System.currentTimeMillis() / 10)).intValue();
+        int position = ((Long) (System.currentTimeMillis() / 10)).intValue();
         String city = selectedCity.getText().toString();
-        if (city.equals("")) city = "Ljubljana";
-        LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
-        String date = getDate(year, month, day);
-        String time = getTime(hour, minute);
-        return new AlertData(position, localDateTime, date, time, city, true);
+        if (city.equals("")) city = null;
+        int hour = timePicker.getCurrentHour();
+        int minute = timePicker.getCurrentMinute();
+        LocalTime localTime = LocalTime.of(hour, minute);
+        return new AlertData(position, localTime, city, isDaily, true);
     }
 
     private void cancelDialog(View view) {
         (addAlertView.findViewById(R.id.cancel_alert)).setOnClickListener(null);
         (addAlertView.findViewById(R.id.save_alert)).setOnClickListener(null);
-        dateSet = false;
-        timeSet = false;
         dialog.dismiss();
     }
 
-    private void openTimePickerDialog(View view) {
-        TimePickerDialog.OnTimeSetListener onTimeSetListener = (timePicker, timeHour, timeMinute) -> {
-            hour = timeHour;
-            minute = timeMinute;
-            setTimeButton.setText(getTime(hour, minute));
-            timeSet = true;
-        };
-        int style = TimePickerDialog.THEME_HOLO_LIGHT;
-        TimePickerDialog timeDialog = new TimePickerDialog(this, style, onTimeSetListener, hour, minute, true);
-        timeDialog.setTitle(getString(R.string.select_time));
-        timeDialog.show();
-    }
-
-    private void openDatePickerDialog(View view) {
-        DatePickerDialog.OnDateSetListener onDateSetListener = (datePicker, yyyy, mm, dd) -> {
-            year = yyyy;
-            month = mm + 1;
-            day = dd;
-            setDateButton.setText(String.format(Locale.getDefault(), "%s", getDate(year, month, day)));
-            dateSet = true;
-        };
-        int style = DatePickerDialog.THEME_HOLO_LIGHT;
-        DatePickerDialog dateDialog = new DatePickerDialog(this, style, onDateSetListener, year, month, day);
-        dateDialog.setTitle(getString(R.string.select_date));
-        dateDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        dateDialog.show();
-    }
-
-    private String getDate(int yyyy, int mm, int dd) {
-        LocalDateTime date = LocalDateTime.of(yyyy, mm, dd, 10, 0);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd.MM.yyyy");
-        return formatter.format(date);
-    }
-
-    private String getTime(int hour, int minute) {
-        return String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
+    public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+        if (!isChecked) return;
+        isDaily = checkedId != R.id.button_once;
     }
 }
