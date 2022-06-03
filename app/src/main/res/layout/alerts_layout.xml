@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/alert"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="80dp"
     android:layout_below="@id/alerts_text"
     android:background="@color/white"
     android:paddingTop="10dp">
@@ -15,47 +15,42 @@
         android:layout_centerVertical="true">
 
         <TextView
-            android:id="@+id/alert_date"
+            android:id="@+id/alert_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="false"
-            android:layout_marginStart="20dp"
-            android:text="Ponedeljek 15.12"
+            android:layout_marginStart="30dp"
+            android:text="08:30"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="22sp"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/alert_time"
+            android:id="@+id/alert_repeat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/alert_date"
+            android:layout_below="@id/alert_time"
             android:layout_centerHorizontal="false"
-            android:layout_marginStart="20dp"
-            android:text="OB 15:00"
-            android:textAllCaps="true"
+            android:layout_marginStart="30dp"
+            android:text="Enkrat"
             android:textColor="@color/darkGrey"
-            android:textSize="22sp"
+            android:textSize="15sp"
             tools:ignore="HardcodedText" />
 
 
     </RelativeLayout>
 
-    <ToggleButton
-        android:id="@+id/alert_toggle"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/toggle_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="false"
         android:layout_centerVertical="true"
-        android:layout_marginTop="9dp"
         android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/remove_alert"
-        android:paddingVertical="14dp"
-        android:textOff="@string/turn_on"
-        android:textOn="@string/turn_off"
-        android:textSize="22sp"
-        tools:ignore="RelativeOverlap" />
+        android:layout_toStartOf="@id/remove_alert"
+        android:thumb="@drawable/switch_thumb"
+        app:switchMinWidth="0dp"
+        app:track="@drawable/switch_track" />
 
     <Button
         android:id="@+id/remove_alert"
@@ -68,10 +63,4 @@
         android:backgroundTint="@color/veryDarkBlue"
         app:backgroundTint="@null"
         app:drawableTint="@color/darkBlue" />
-
-    <View
-        android:id="@+id/border"
-        style="@style/Divider"
-        android:layout_alignParentBottom="true"
-        android:background="@color/blue" />
 </RelativeLayout>
