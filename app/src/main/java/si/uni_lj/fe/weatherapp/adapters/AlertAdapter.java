@@ -6,26 +6,33 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import si.uni_lj.fe.weatherapp.R;
@@ -67,10 +74,30 @@ public class AlertAdapter extends BaseAdapter {
 
         AlertData alertData = getItem(position);
 
+        int max = getCount();
+        int rStart = 125, rStop = 193, gStart = 160, gStop = 218;
+        int r, g, b = 255;
+        if (max > 10) {
+            r = (int) (rStop - Math.floor((rStop - rStart) / (max - 1.0)) * position);
+            g = (int) (gStop - Math.floor((gStop - gStart) / (max - 1.0)) * position);
+        } else {
+            r = rStop - 5 * position;
+            g = gStop - 5 * position;
+        }
         try {
-            ((TextView) convertView.findViewById(R.id.alert_date)).setText(alertData.getDate());
-            ((TextView) convertView.findViewById(R.id.alert_time)).setText(alertData.getTime());
-            ToggleButton alertToggle = convertView.findViewById(R.id.alert_toggle);
+            RelativeLayout layout = convertView.findViewById(R.id.alert);
+            layout.setBackgroundColor(Color.rgb(r, g, b));
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+            String time = dtf.format(alertData.getTime());
+            long millisDifference = getMillisFromLocalTime(alertData.getTime()) - System.currentTimeMillis();
+            long hours = millisDifference / 3_600_000;
+            long minutes = (millisDifference - hours * 3_600_000) / 60_000;
+
+            String repeatType = alertData.isDaily() ? context.getString(R.string.daily) : context.getString(R.string.once);
+            String repeat = String.format("%s | Alarm čez %s h %s min", repeatType, hours, minutes);
+            ((TextView) convertView.findViewById(R.id.alert_time)).setText(time);
+            ((TextView) convertView.findViewById(R.id.alert_repeat)).setText(repeat);
+            SwitchCompat alertToggle = convertView.findViewById(R.id.toggle_alert);
             alertToggle.setChecked(alertData.isActive());
             alertToggle.setOnClickListener(this::toggleAlert);
             convertView.findViewById(R.id.remove_alert).setOnClickListener(this::removeAlert);
@@ -135,12 +162,25 @@ public class AlertAdapter extends BaseAdapter {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alertData.getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(Date.from(alertData.getDateTime().atZone(ZoneId.systemDefault()).toInstant()));
-
+        calendar.setTime(Date.from(Instant.ofEpochMilli(getMillisFromLocalTime(alertData.getTime()))));
+        if (!alertData.isDaily()) {
+            alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+            Toast.makeText(context, "Enkratni alarm je prižgan", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), 86_400_000L, pendingIntent);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
-        Toast.makeText(context, "Alarm je prižgan", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Dnevni alarm je prižgan", Toast.LENGTH_SHORT).show();
+    }
+
+    private long getMillisFromLocalTime(LocalTime time) {
+        LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now(), time);
+        long timeMillis = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        if (timeMillis - System.currentTimeMillis() < 1000) {
+            timeMillis += 86_400_000L;
+        }
+        return timeMillis;
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -149,6 +189,5 @@ public class AlertAdapter extends BaseAdapter {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alertId, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
-        Toast.makeText(context, "Alarm je ugasnjen", Toast.LENGTH_SHORT).show();
     }
 }

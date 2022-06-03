@@ -1,23 +1,21 @@
 package si.uni_lj.fe.weatherapp.data;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @SuppressWarnings("unused")
 public class AlertData {
 
     private int id;
-    private LocalDateTime dateTime;
-    private String date;
-    private String time;
+    private LocalTime time;
     private String city;
+    private boolean isDaily;
     private boolean isActive;
 
-    public AlertData(int id, LocalDateTime dateTime, String date, String time, String city, boolean isActive) {
+    public AlertData(int id, LocalTime time, String city, boolean isDaily, boolean isActive) {
         this.id = id;
-        this.dateTime = dateTime;
-        this.date = date;
-        this.time = "Ob " + time;
+        this.time = time;
         this.city = city;
+        this.isDaily = isDaily;
         this.isActive = isActive;
     }
 
@@ -29,27 +27,11 @@ public class AlertData {
         this.id = id;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
@@ -59,6 +41,14 @@ public class AlertData {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public boolean isDaily() {
+        return isDaily;
+    }
+
+    public void setDaily(boolean daily) {
+        isDaily = daily;
     }
 
     public boolean isActive() {
