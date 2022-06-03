@@ -28,8 +28,8 @@ import si.uni_lj.fe.weatherapp.data.AlertData;
 
 public class AlertsActivity extends AppCompatActivity {
 
+    private boolean isDaily = false;
     private AlertDialog dialog;
-    private boolean isDaily;
     private TimePicker timePicker;
     private EditText selectedCity;
     private AlertAdapter alertAdapter;

@@ -1,7 +1,5 @@
 package si.uni_lj.fe.weatherapp.data;
 
-import android.util.Log;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -48,7 +46,6 @@ public class CurrentData {
     }
 
     private String setLocalTime(String timezone) {
-        Log.i("Timezone", timezone);
         ZoneId zoneId = ZoneId.of(timezone);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         Instant instant = Instant.now();

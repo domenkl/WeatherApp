@@ -91,12 +91,14 @@ public class AlertAdapter extends BaseAdapter {
             String time = dtf.format(alertData.getTime());
             long millisDifference = getMillisFromLocalTime(alertData.getTime()) - System.currentTimeMillis();
             long hours = millisDifference / 3_600_000;
-            long minutes = (millisDifference - hours * 3_600_000) / 60_000;
+            long minutes = (long) Math.ceil((millisDifference - hours * 3_600_000) / 60_000.0);
 
             String repeatType = alertData.isDaily() ? context.getString(R.string.daily) : context.getString(R.string.once);
-            String repeat = String.format("%s | Alarm čez %s h %s min", repeatType, hours, minutes);
+            if (alertData.isActive())
+                repeatType = String.format("%s | Alarm čez %s h %s min", repeatType, hours, minutes);
+
             ((TextView) convertView.findViewById(R.id.alert_time)).setText(time);
-            ((TextView) convertView.findViewById(R.id.alert_repeat)).setText(repeat);
+            ((TextView) convertView.findViewById(R.id.alert_repeat)).setText(repeatType);
             SwitchCompat alertToggle = convertView.findViewById(R.id.toggle_alert);
             alertToggle.setChecked(alertData.isActive());
             alertToggle.setOnClickListener(this::toggleAlert);
@@ -159,6 +161,7 @@ public class AlertAdapter extends BaseAdapter {
     @SuppressLint("UnspecifiedImmutableFlag")
     public void addAlertNotification(AlertData alertData) {
         Intent alarmIntent = new Intent(context, AlertReceiver.class);
+        alarmIntent.putExtra("id", alertData.getId());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alertData.getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
