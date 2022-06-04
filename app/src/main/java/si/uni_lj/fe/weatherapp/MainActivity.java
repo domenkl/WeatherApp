@@ -31,30 +31,19 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
-import si.uni_lj.fe.weatherapp.util.CallbackFuture;
-import si.uni_lj.fe.weatherapp.util.UrlBuilder;
+import si.uni_lj.fe.weatherapp.util.Util;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final OkHttpClient CLIENT;
     private double longitude, latitude;
     private boolean permissionGranted = false;
     private LocationManager locationManager;
     private Button search;
-
-    static {
-        CLIENT = new OkHttpClient.Builder()
-                .retryOnConnectionFailure(true)
-                .build();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,21 +109,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         try {
-            String dailyUrl = UrlBuilder.getCurrentWeatherUrl(cityName);
-            Response response = getWeatherResponse(dailyUrl);
+            Response response = Util.getCurrentWeatherResponse(cityName);
             handleCurrentDataResponse(response);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private Response getWeatherResponse(String url) throws ExecutionException, InterruptedException {
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        CallbackFuture future = new CallbackFuture();
-        CLIENT.newCall(request).enqueue(future);
-        return future.get();
     }
 
     private void handleCurrentDataResponse(Response response) throws IOException {
@@ -174,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAndSaveLocation(String currentCity) throws IOException {
+        Locale.setDefault(new Locale("en", "US"));
         Address address = getAddressFromCoordinates(latitude, longitude);
         String currentCountry = address.getCountryCode();
         String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
@@ -181,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         boolean shouldSave = shouldSaveCityAndCountry(currentCity, currentCountry);
         if (shouldSave) {
-            saveWeeklyDataToSharedPreferences();
+            saveOneCallData();
             return;
         }
         startWeeklyActivity();
@@ -209,11 +189,8 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void saveWeeklyDataToSharedPreferences() {
-        Request request = new Request.Builder()
-                .url(UrlBuilder.getOneCallWeatherUrl(latitude, longitude))
-                .build();
-        CLIENT.newCall(request).enqueue(new Callback() {
+    private void saveOneCallData() {
+        Callback callback = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
@@ -227,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> startWeeklyActivity());
                 }
             }
-        });
+        };
+        Util.makeOneCallRequest(latitude, longitude, callback);
     }
 
     @SuppressLint("ApplySharedPref")
@@ -266,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
         }
+
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             //override super to get rid of error
