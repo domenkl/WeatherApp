@@ -179,8 +179,12 @@ public class MainActivity extends AppCompatActivity {
         String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
         currentCity = currentCity != null ? currentCity : addressCity;
 
-        saveCityAndCountry(currentCity, currentCountry);
-        saveWeeklyDataToSharedPreferences();
+        boolean shouldSave = shouldSaveCityAndCountry(currentCity, currentCountry);
+        if (shouldSave) {
+            saveWeeklyDataToSharedPreferences();
+            return;
+        }
+        startWeeklyActivity();
     }
 
     private Address getAddressFromCoordinates(double lat, double lon) throws IOException {
@@ -189,12 +193,20 @@ public class MainActivity extends AppCompatActivity {
         return addresses.get(0);
     }
 
-    private void saveCityAndCountry(String currentCity, String currentCountry) {
+    private boolean shouldSaveCityAndCountry(String currentCity, String currentCountry) {
         SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("savedCity", currentCity);
-        editor.putString("savedCountry", currentCountry);
-        editor.apply();
+        long lastSavedOneCall = preferences.getLong("lastSavedOneCall", 0L);
+        String savedCity = preferences.getString("savedCity", "");
+
+        //if city is not the same or more than 5 minutes have passed since last use
+        if (!savedCity.equals(currentCity) || (System.currentTimeMillis() - lastSavedOneCall) / 300_000 >= 1) {
+            editor.putString("savedCity", currentCity);
+            editor.putString("savedCountry", currentCountry);
+            editor.apply();
+            return true;
+        }
+        return false;
     }
 
     private void saveWeeklyDataToSharedPreferences() {
