@@ -97,6 +97,9 @@ public class AlertAdapter extends BaseAdapter {
             if (alertData.isActive())
                 repeatType = String.format("%s | Alarm čez %s h %s min", repeatType, hours, minutes);
 
+            TextView alertCity = convertView.findViewById(R.id.alert_city);
+            alertCity.setText(alertData.getCity());
+
             ((TextView) convertView.findViewById(R.id.alert_time)).setText(time);
             ((TextView) convertView.findViewById(R.id.alert_repeat)).setText(repeatType);
             SwitchCompat alertToggle = convertView.findViewById(R.id.toggle_alert);
@@ -117,6 +120,7 @@ public class AlertAdapter extends BaseAdapter {
         if (toggleActive) addAlertNotification(data);
         else removeAlertNotification(data.getId());
         updateAlertData();
+        this.notifyDataSetChanged();
     }
 
     private void removeAlert(View view) {

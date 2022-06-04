@@ -91,7 +91,6 @@ public class AlertsActivity extends AppCompatActivity {
     private AlertData createNewAlertData() {
         int position = ((Long) (System.currentTimeMillis() / 10)).intValue();
         String city = selectedCity.getText().toString();
-        if (city.equals("")) city = null;
         int hour = timePicker.getCurrentHour();
         int minute = timePicker.getCurrentMinute();
         LocalTime localTime = LocalTime.of(hour, minute);
