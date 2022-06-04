@@ -1,13 +1,17 @@
 package si.uni_lj.fe.weatherapp;
 
+import static si.uni_lj.fe.weatherapp.util.Util.*;
+
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -23,8 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.Response;
 import si.uni_lj.fe.weatherapp.adapters.AlertAdapter;
 import si.uni_lj.fe.weatherapp.data.AlertData;
+import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
 
 public class AlertsActivity extends AppCompatActivity {
 
@@ -34,6 +40,7 @@ public class AlertsActivity extends AppCompatActivity {
     private EditText selectedCity;
     private AlertAdapter alertAdapter;
     private View addAlertView;
+    private Gson gson;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +53,7 @@ public class AlertsActivity extends AppCompatActivity {
         alertsView.setAdapter(alertAdapter);
         addAlerts.setOnClickListener(this::createAddAlertDialog);
         Locale.setDefault(new Locale("sl", "SI"));
+        gson = new Gson();
     }
 
     @SuppressLint("InflateParams")
@@ -74,11 +82,16 @@ public class AlertsActivity extends AppCompatActivity {
         List<AlertData> alertData = new ArrayList<>();
         SharedPreferences preferences = getSharedPreferences("savedAlerts", MODE_PRIVATE);
         String savedAlerts = preferences.getString("savedAlertsData", null);
-        Gson gson = new Gson();
 
         if (savedAlerts != null) {
             Type type = new TypeToken<List<AlertData>>() {}.getType();
             alertData = gson.fromJson(savedAlerts, type);
+        }
+
+        if (!doesCityExist()) {
+            selectedCity.setBackgroundColor(Color.parseColor("#f58e9f"));
+            Toast.makeText(this, getString(R.string.unsuccessful), Toast.LENGTH_SHORT).show();
+            return;
         }
 
         AlertData newAlert = createNewAlertData();
@@ -86,6 +99,24 @@ public class AlertsActivity extends AppCompatActivity {
         alertAdapter.addAlertNotification(newAlert);
         alertAdapter.updateAdapter(alertData);
         cancelDialog(view);
+    }
+
+    private boolean doesCityExist() {
+        try {
+            String city = selectedCity.getText().toString();
+            if (city.equals("")) return true;
+
+            Response response = getCurrentWeatherResponse(city);
+            if (response.isSuccessful()) {
+                if (response.body() == null) return false;
+                CurrentDataModel data = gson.fromJson(response.body().string(), CurrentDataModel.class);
+                selectedCity.setText(data.getName());
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private AlertData createNewAlertData() {

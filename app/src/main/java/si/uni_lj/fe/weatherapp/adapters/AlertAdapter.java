@@ -91,11 +91,14 @@ public class AlertAdapter extends BaseAdapter {
             String time = dtf.format(alertData.getTime());
             long millisDifference = getMillisFromLocalTime(alertData.getTime()) - System.currentTimeMillis();
             long hours = millisDifference / 3_600_000;
-            long minutes = (long) Math.ceil((millisDifference - hours * 3_600_000) / 60_000.0);
+            long minutes = (long) Math.floor((millisDifference - hours * 3_600_000) / 60_000.0);
 
             String repeatType = alertData.isDaily() ? context.getString(R.string.daily) : context.getString(R.string.once);
-            if (alertData.isActive())
-                repeatType = String.format("%s | Alarm čez %s h %s min", repeatType, hours, minutes);
+            if (alertData.isActive()) {
+                if (hours == 0 && minutes == 0)
+                    repeatType = String.format("%s | %s", repeatType, context.getString(R.string.less_than_min));
+                else repeatType = String.format("%s | Alarm čez %s h %s min", repeatType, hours, minutes);
+            }
 
             TextView alertCity = convertView.findViewById(R.id.alert_city);
             alertCity.setText(alertData.getCity());
@@ -136,7 +139,8 @@ public class AlertAdapter extends BaseAdapter {
         SharedPreferences preferences = context.getSharedPreferences("savedAlerts", Context.MODE_PRIVATE);
         String savedAlerts = preferences.getString("savedAlertsData", null);
         if (savedAlerts != null) {
-            Type type = new TypeToken<List<AlertData>>() {}.getType();
+            Type type = new TypeToken<List<AlertData>>() {
+            }.getType();
             alertData = new Gson().fromJson(savedAlerts, type);
         }
         return alertData;
