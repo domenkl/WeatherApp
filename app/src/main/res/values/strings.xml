@@ -40,4 +40,5 @@
     <string name="custom">Po meri</string>
     <string name="using_location">Uporabljena bo vaša lokacija</string>
     <string name="less_than_min">Alarm čez manj kot minuto</string>
+    <string name="unknown">Neznano</string>
 </resources>

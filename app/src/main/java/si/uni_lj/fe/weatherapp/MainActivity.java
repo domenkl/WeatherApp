@@ -143,21 +143,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAndSaveLocationAsync(String currentCity) {
-        new Thread(() -> {
-            try {
-                getAndSaveLocation(currentCity);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        new Thread(() -> getAndSaveLocation(currentCity)).start();
     }
 
-    private void getAndSaveLocation(String currentCity) throws IOException {
-        Locale.setDefault(new Locale("en", "US"));
-        Address address = getAddressFromCoordinates(latitude, longitude);
-        String currentCountry = address.getCountryCode();
-        String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
-        currentCity = currentCity != null ? currentCity : addressCity;
+    private void getAndSaveLocation(String currentCity) {
+        String currentCountry = null;
+        try {
+            Locale.setDefault(new Locale("en", "US"));
+            Address address = getAddressFromCoordinates(latitude, longitude);
+            currentCountry = address.getCountryCode();
+            String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
+            currentCity = currentCity != null ? currentCity : addressCity;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (currentCountry == null) currentCountry = "?";
+        if (currentCity == null) currentCity = getString(R.string.unknown);
 
         boolean shouldSave = shouldSaveCityAndCountry(currentCity, currentCountry);
         if (shouldSave) {
