@@ -10,35 +10,43 @@ import si.uni_lj.fe.weatherapp.models.DailyInfo;
 
 public class WeeklyData {
 
-    private final String day;
+    private String day;
+    private String date;
     private final String tempDay;
     private final String tempMorning;
     private final String weatherIcon;
-    private final String cloudiness;
+    private final String description;
     private final String precipitation;
-    private final String wind;
 
     public WeeklyData(DailyInfo dailyInfo) {
-        this.day = setDay(dailyInfo.getDt());
+        setDayAndDate(dailyInfo.getDt());
         this.tempDay = (int) Math.round(dailyInfo.getTemperatures().getDay()) + "\u2103";
         this.tempMorning = (int) Math.round(dailyInfo.getTemperatures().getMorn()) + "\u2103";
         this.weatherIcon = dailyInfo.getWeather().get(0).getIcon();
-        this.cloudiness = dailyInfo.getClouds() + "%";
-        this.precipitation = (int)(dailyInfo.getPop() * 100) + "%";
-        this.wind = (double) Math.round(dailyInfo.getWindSpeed() * 36) / 10 + "";
+        this.description = startDescription(dailyInfo.getWeather().get(0).getDescription());
+        this.precipitation = (int) (dailyInfo.getPop() * 100) + "%";
     }
 
-    @SuppressWarnings("newApi")
-    private String setDay(long dt) {
+    private void setDayAndDate(long dt) {
         Locale.setDefault(new Locale("sl", "SI"));
         Instant instant = Instant.ofEpochSecond(dt);
         LocalDateTime date = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd.MM");
-        return formatter.format(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("eee");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.");
+        this.day = formatter.format(date);
+        this.date = dateFormatter.format(date);
+    }
+
+    private String startDescription(String desc) {
+        return desc.substring(0,1).toUpperCase() + desc.substring(1);
     }
 
     public String getDay() {
         return day;
+    }
+
+    public String getDate() {
+        return date;
     }
 
     public String getTempDay() {
@@ -53,15 +61,11 @@ public class WeeklyData {
         return weatherIcon;
     }
 
-    public String getCloudiness() {
-        return cloudiness;
+    public String getDescription() {
+        return description;
     }
 
     public String getPrecipitation() {
         return precipitation;
-    }
-
-    public String getWind() {
-        return wind;
     }
 }

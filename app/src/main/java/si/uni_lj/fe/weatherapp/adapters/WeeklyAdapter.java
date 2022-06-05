@@ -42,16 +42,17 @@ public class WeeklyAdapter extends ArrayAdapter<WeeklyData> {
 
         try {
             ((TextView) convertView.findViewById(R.id.day)).setText(data.getDay());
-            ((TextView) convertView.findViewById(R.id.temp_day)).setText(data.getTempDay());
-            ((TextView) convertView.findViewById(R.id.temp_morning)).setText(data.getTempMorning());
-            ((TextView) convertView.findViewById(R.id.wind)).setText(data.getWind());
-            ((TextView) convertView.findViewById(R.id.precip_probability)).setText(String.valueOf(data.getPrecipitation()));
-            ((TextView) convertView.findViewById(R.id.cloudiness)).setText(data.getCloudiness());
-            ImageView view = convertView.findViewById(R.id.weather_logo);
+            ((TextView) convertView.findViewById(R.id.date)).setText(data.getDate());
+            ((TextView) convertView.findViewById(R.id.day_temperature)).setText(data.getTempDay());
+            ((TextView) convertView.findViewById(R.id.morn_temperature)).setText(data.getTempMorning());
+            ((TextView) convertView.findViewById(R.id.daily_description)).setText(data.getDescription());
+            ((TextView) convertView.findViewById(R.id.precip_prob)).setText(String.valueOf(data.getPrecipitation()));
+            ImageView view = convertView.findViewById(R.id.hour_weather_logo);
             InputStream is = mContext.getAssets().open(String.format("weather/%s.png", data.getWeatherIcon()));
             Drawable drawable = Drawable.createFromStream(is, null);
             view.setImageDrawable(drawable);
-        }catch (NullPointerException | IOException e) {
+
+        } catch (NullPointerException | IOException e) {
             e.printStackTrace();
         }
         return convertView;

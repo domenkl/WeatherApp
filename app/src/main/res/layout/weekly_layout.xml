@@ -3,149 +3,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
     tools:ignore="HardcodedText">
 
-    <RelativeLayout
-        android:id="@+id/layout_top"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/date_layout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/darkGrey"
-        android:orientation="horizontal">
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Sreda 8.5"
+            android:fontFamily="@font/inter"
+            android:text="NED."
             android:textAllCaps="true"
-            android:textColor="@color/lightGrey"
-            android:textSize="20sp" />
-    </RelativeLayout>
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-5dp"
+            android:fontFamily="@font/inter"
+            android:text="15.5."
+            android:textColor="@color/darkGrey"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/hour_weather_logo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/date_layout"
+        android:contentDescription="@null"
+        android:src="@drawable/w01d" />
+
+    <LinearLayout
+        android:id="@+id/daily_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/hour_weather_logo"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/day_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
+            android:text="25\u2103"
+            android:textColor="@color/turquoise"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/morn_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-5dp"
+            android:fontFamily="@font/inter"
+            android:text="15\u2103"
+            android:textColor="@color/darkGrey"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/daily_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/daily_temperature"
+        android:fontFamily="@font/inter"
+        android:text="Pretežno oblačno"
+        android:textAlignment="center"
+        android:textColor="@color/turquoise" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_top"
-        android:background="@color/lightGrey"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/temp_day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="10dp"
-            android:text="20\u2103"
-            android:textColor="@color/darkBlue"
-            android:textSize="35sp" />
-
-        <TextView
-            android:id="@+id/temp_morning"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/temp_day"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="-10dp"
-            android:text="12\u2103"
-            android:textColor="@color/darkGrey"
-            android:textSize="25sp" />
-
-        <ImageView
-            android:id="@+id/weather_logo"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@id/temp_day"
-            android:contentDescription="@null"
-            android:padding="5dp"
-            android:src="@drawable/w01d" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_toStartOf="@id/wind_logo"
-            android:layout_marginEnd="5dp">
-
-            <TextView
-                android:id="@+id/wind"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="5dp"
-                android:text="16"
-                android:textColor="@color/darkGrey"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/wind_unit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/wind"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="5dp"
-                android:layout_marginTop="-8dp"
-                android:text="km/h"
-                android:textColor="@color/darkGrey"
-                android:textSize="16sp" />
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/wind_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="16dp"
-            android:layout_toStartOf="@id/cloudiness"
-            android:contentDescription="@null"
-            android:src="@drawable/wind" />
-
-        <TextView
-            android:id="@+id/cloudiness"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="16dp"
-            android:layout_toStartOf="@id/cloudiness_logo"
-            android:text="50%"
-            android:textColor="@color/darkGrey"
-            android:textSize="20sp" />
-
-        <ImageView
-            android:id="@+id/cloudiness_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="16dp"
-            android:layout_toStartOf="@id/precip_probability"
-            android:contentDescription="@null"
-            android:src="@drawable/cloudiness" />
-
-        <TextView
-            android:id="@+id/precip_probability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="16dp"
-            android:layout_toStartOf="@+id/precip_logo"
-            android:text="50%"
-            android:textColor="@color/darkGrey"
-            android:textSize="20sp" />
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        tools:ignore="UseCompoundDrawables">
 
         <ImageView
             android:id="@+id/precip_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
             android:contentDescription="@null"
-            android:src="@drawable/raindrop" />
+            android:src="@drawable/rain" />
+
+        <TextView
+            android:id="@+id/precip_prob"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/precip_logo"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/inter"
+            android:text="100%"
+            android:textColor="@color/darkGrey"
+            android:textSize="15sp" />
     </RelativeLayout>
 </RelativeLayout>
 
