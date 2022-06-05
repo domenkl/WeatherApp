@@ -66,7 +66,7 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.ViewHolder
             time = view.findViewById(R.id.day_time);
             temperature = view.findViewById(R.id.day_temp);
             precipitation = view.findViewById(R.id.precipitation_value);
-            weatherIcon = view.findViewById(R.id.day_weather);
+            weatherIcon = view.findViewById(R.id.hour_weather);
         }
     }
 }
