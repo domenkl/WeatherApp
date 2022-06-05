@@ -8,9 +8,10 @@
             type="si.uni_lj.fe.weatherapp.data.CurrentData" />
     </data>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -321,6 +322,7 @@
             </GridLayout>
 
             <RelativeLayout
+                android:id="@+id/hourly_view_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/grid_extra"
@@ -333,6 +335,30 @@
                     android:layout_height="match_parent" />
 
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/weekly_view_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/hourly_view_layout"
+                android:layout_centerHorizontal="true"
+                android:paddingVertical="10dp"
+                android:text="@string/weekly_forecast"
+                android:textAllCaps="true"
+                android:textSize="20sp" />
+
+            <View
+                style="@style/Divider"
+                android:layout_width="match_parent"
+                android:layout_below="@id/weekly_view_text"
+                android:background="@color/darkGrey" />
+
+            <si.uni_lj.fe.weatherapp.util.NonScrollListView
+                android:id="@+id/weekly_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/weekly_view_text" />
+
         </RelativeLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </layout>

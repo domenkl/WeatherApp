@@ -22,11 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import si.uni_lj.fe.weatherapp.adapters.HourlyAdapter;
+import si.uni_lj.fe.weatherapp.adapters.WeeklyAdapter;
 import si.uni_lj.fe.weatherapp.data.CurrentData;
 import si.uni_lj.fe.weatherapp.data.HourlyData;
+import si.uni_lj.fe.weatherapp.data.WeeklyData;
 import si.uni_lj.fe.weatherapp.databinding.ActivityWeeklyBinding;
+import si.uni_lj.fe.weatherapp.models.DailyInfo;
 import si.uni_lj.fe.weatherapp.models.HourlyInfo;
 import si.uni_lj.fe.weatherapp.models.OneCallDataModel;
+import si.uni_lj.fe.weatherapp.util.NonScrollListView;
 
 public class WeeklyActivity extends AppCompatActivity {
 
@@ -37,7 +41,8 @@ public class WeeklyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setCurrentDataBinding();
-        convertAndSetHourlyAdapter();
+        setHourlyAdapter(convertHourlyData());
+        setWeeklyAdapter(convertWeeklyData());
     }
 
     private void setCurrentDataBinding() {
@@ -54,15 +59,6 @@ public class WeeklyActivity extends AppCompatActivity {
         setImageResource(this, R.id.weather_icon, currentData.getIcon());
     }
 
-    private void convertAndSetHourlyAdapter() {
-        List<HourlyData> hourlyData = new ArrayList<>();
-        ZoneId zoneOfLocation = ZoneId.of(oneCallDataModel.getTimezone());
-        for (HourlyInfo hourlyInfo : oneCallDataModel.getHourly()) {
-            hourlyData.add(new HourlyData(hourlyInfo, zoneOfLocation));
-        }
-        setHourlyAdapter(hourlyData);
-    }
-
     @SuppressWarnings("SameParameterValue")
     private void setImageResource(Context context, int viewId, String imageName) {
         try {
@@ -75,6 +71,15 @@ public class WeeklyActivity extends AppCompatActivity {
         }
     }
 
+    private List<HourlyData> convertHourlyData() {
+        List<HourlyData> hourlyData = new ArrayList<>();
+        ZoneId zoneOfLocation = ZoneId.of(oneCallDataModel.getTimezone());
+        for (HourlyInfo hourlyInfo : oneCallDataModel.getHourly()) {
+            hourlyData.add(new HourlyData(hourlyInfo, zoneOfLocation));
+        }
+        return hourlyData;
+    }
+
     private void setHourlyAdapter(List<HourlyData> hourlyData) {
         RecyclerView recyclerView = findViewById(R.id.hourly_view);
         HourlyAdapter hourlyAdapter = new HourlyAdapter(hourlyData, this);
@@ -83,5 +88,19 @@ public class WeeklyActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(hourlyAdapter);
+    }
+
+    private List<WeeklyData> convertWeeklyData() {
+        List<WeeklyData> weeklyData = new ArrayList<>();
+        for (DailyInfo dailyInfo : oneCallDataModel.getDaily()) {
+            weeklyData.add(new WeeklyData(dailyInfo));
+        }
+        return weeklyData;
+    }
+
+    private void setWeeklyAdapter(List<WeeklyData> weeklyData) {
+        WeeklyAdapter weeklyAdapter = new WeeklyAdapter(this, R.layout.weekly_layout, weeklyData);
+        NonScrollListView weeklyView = findViewById(R.id.weekly_view);
+        weeklyView.setAdapter(weeklyAdapter);
     }
 }
