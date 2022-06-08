@@ -38,6 +38,7 @@ import java.util.Locale;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import si.uni_lj.fe.weatherapp.models.Coordinates;
 import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
 import si.uni_lj.fe.weatherapp.util.Util;
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private double longitude, latitude;
     private boolean permissionGranted = false;
+    private boolean savedLocation = false;
     private LocationManager locationManager;
     private Button search;
 
@@ -65,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
 
         checkLocationPermission();
         createNotificationChannel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        removeLocationUpdates();
     }
 
     @Override
@@ -143,7 +151,18 @@ public class MainActivity extends AppCompatActivity {
         }
         longitude = Math.floor(longitude * 100) / 100;
         latitude = Math.floor(latitude * 100) / 100;
+        // update location
+        saveLocationToPreferences();
         getAndSaveLocationAsync(null);
+    }
+
+    private void saveLocationToPreferences() {
+        SharedPreferences preferences = getSharedPreferences("lastSavedLocation", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        Coordinates coordinates = new Coordinates(longitude, latitude);
+
+        editor.putString("location", new Gson().toJson(coordinates));
+        editor.apply();
     }
 
     private void getAndSaveLocationAsync(String currentCity) {
@@ -249,6 +268,11 @@ public class MainActivity extends AppCompatActivity {
         public void onLocationChanged(@NonNull Location location) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
+
+            if (!savedLocation) {
+                saveLocationToPreferences();
+                savedLocation = true;
+            }
         }
 
         @Override
