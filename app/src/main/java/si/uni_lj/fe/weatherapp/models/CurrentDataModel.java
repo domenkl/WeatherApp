@@ -20,22 +20,6 @@ public class CurrentDataModel {
     private Wind wind;
     private Cloud clouds;
 
-    public static class Coordinates {
-        @SerializedName("lon")
-        private double longitude;
-
-        @SerializedName("lat")
-        private double latitude;
-
-        public double getLongitude() {
-            return longitude;
-        }
-
-        public double getLatitude() {
-            return latitude;
-        }
-    }
-
     public static class Sys {
         private String country;
         private long sunrise;
