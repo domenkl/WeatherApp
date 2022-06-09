@@ -45,6 +45,7 @@ import si.uni_lj.fe.weatherapp.util.Util;
 public class MainActivity extends AppCompatActivity {
 
     private double longitude, latitude;
+    private Coordinates cityCoordinates;
     private boolean permissionGranted = false;
     private boolean savedLocation = false;
     private LocationManager locationManager;
@@ -73,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         removeLocationUpdates();
+    }
+
+    @Override
+    protected void onPostResume() {
+        cityCoordinates = null;
+        super.onPostResume();
     }
 
     @Override
@@ -135,8 +142,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (response.body() != null) {
             CurrentDataModel currentDataModel = new Gson().fromJson(response.body().string(), CurrentDataModel.class);
-            longitude = currentDataModel.getCoordinates().getLongitude();
-            latitude = currentDataModel.getCoordinates().getLatitude();
+            cityCoordinates = currentDataModel.getCoordinates();
             removeLocationUpdates();
             String currentCity = currentDataModel.getName();
 
@@ -149,8 +155,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.location_denied, Toast.LENGTH_SHORT).show();
             return;
         }
-        longitude = Math.floor(longitude * 100) / 100;
-        latitude = Math.floor(latitude * 100) / 100;
         // update location
         saveLocationToPreferences();
         getAndSaveLocationAsync(null);
@@ -173,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
         String currentCountry = null;
         try {
             Locale.setDefault(new Locale("en", "US"));
-            Address address = getAddressFromCoordinates(latitude, longitude);
+            Address address;
+            if (cityCoordinates == null) address = getAddressFromCoordinates(latitude, longitude);
+            else address = getAddressFromCoordinates(cityCoordinates.getLatitude(), cityCoordinates.getLongitude());
             currentCountry = address.getCountryCode();
             String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
             currentCity = currentCity != null ? currentCity : addressCity;
