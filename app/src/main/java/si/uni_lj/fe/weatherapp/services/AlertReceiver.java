@@ -183,7 +183,7 @@ public class AlertReceiver extends BroadcastReceiver {
         if (occurrences.size() == 0) bigText += "V naslednjih 24 urah naj ne bi bilo dežja.";
         else bigText += rainText;
 
-        showNotification(R.drawable.ic_launcher_foreground, currentIcon, title, text, bigText);
+        showNotification(R.drawable.ic_notification, currentIcon, title, text, bigText);
     }
 
     private List<RainOccurrence> getRainOccurrences(List<HourlyInfo> hourly) {
