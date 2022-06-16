@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="search">Išči</string>
-    <string name="use_location">Uporabi mojo lokacijo</string>
+    <string name="use_location">Uporabi lokacijo</string>
     <string name="search_text">Vnesite mesto ali uporabite lokacijo</string>
     <string name="search_hint">Primer: Ljubljana…</string>
     <string name="title">Ali bo dež</string>
@@ -44,4 +44,6 @@
     <string name="notification_channel">Ali bo dez notification channel</string>
     <string name="channel_description">Notifikacije za vremensko napoved</string>
     <string name="channel_id">weatherReport</string>
+    <string name="fast_forecast">Hitra napoved</string>
+    <string name="forecast_paused">Hitra napoved je na eno minutni pavzi!</string>
 </resources>

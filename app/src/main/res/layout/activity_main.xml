@@ -96,14 +96,30 @@
             android:textSize="15sp"
             android:textAlignment="center" />
 
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <Button
             android:id="@+id/use_location"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@null"
-            android:layout_marginTop="10dp"
             android:textSize="15sp"
-            android:text="@string/use_location" />
+            android:text="@string/use_location"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/fast_forecast"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null"
+            android:text="@string/fast_forecast"
+            android:layout_marginStart="10dp"
+            tools:ignore="ButtonStyle"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

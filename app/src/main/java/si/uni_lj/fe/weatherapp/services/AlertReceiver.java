@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -58,9 +59,18 @@ public class AlertReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.i("Alarm", "received" + " " + LocalDateTime.now().atZone(ZoneId.systemDefault()));
         int id = intent.getIntExtra("id", 0);
-        if (id == 0) return;
         this.context = context;
-        turnOffAlertIfNotDaily(id);
+        if (id == 0) return;
+
+        // received instantly after clicking on forecast button
+        // no need to check and turn off the alert, no need for fused provider either
+        if (id == Util.FORECAST_REQUEST_CODE) {
+            receivedAlert = new AlertData(0, LocalTime.now(), "", false, false);
+            useLastResort();
+            return;
+        }
+
+        receivedAlert = turnOffAlertIfNotDaily(id);
         if (receivedAlert == null) return;
 
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
@@ -87,17 +97,18 @@ public class AlertReceiver extends BroadcastReceiver {
         checkWeatherReport(location);
     }
 
-    private void turnOffAlertIfNotDaily(long id) {
+    private AlertData turnOffAlertIfNotDaily(long id) {
         List<AlertData> alertData = getAlertData();
+        AlertData receivedAlert = null;
         for (AlertData alert : alertData) {
             if (alert.getId() == id) receivedAlert = alert;
         }
-        if (receivedAlert == null) return;
 
-        if (!receivedAlert.isDaily()) {
+        if (receivedAlert != null && !receivedAlert.isDaily()) {
             receivedAlert.setActive(false);
             updateAlertData(alertData);
         }
+        return receivedAlert;
     }
 
     private List<AlertData> getAlertData() {

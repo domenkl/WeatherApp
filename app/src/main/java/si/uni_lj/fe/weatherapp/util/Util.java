@@ -9,7 +9,8 @@ import okhttp3.Response;
 
 public final class Util {
 
-    public final static OkHttpClient CLIENT;
+    public static final OkHttpClient CLIENT;
+    public static final int FORECAST_REQUEST_CODE = 1;
 
     static {
         CLIENT = new OkHttpClient.Builder()

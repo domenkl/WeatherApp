@@ -3,8 +3,11 @@ package si.uni_lj.fe.weatherapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -40,6 +43,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import si.uni_lj.fe.weatherapp.models.Coordinates;
 import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
+import si.uni_lj.fe.weatherapp.services.AlertReceiver;
 import si.uni_lj.fe.weatherapp.util.Util;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean permissionGranted = false;
     private boolean savedLocation = false;
     private LocationManager locationManager;
-    private Button search;
+    private Button search, useLocation, forecast;
+    private long lastClicked = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         search = findViewById(R.id.search);
-        Button useLocation = findViewById(R.id.use_location);
+        useLocation = findViewById(R.id.use_location);
+        forecast = findViewById(R.id.fast_forecast);
         EditText input = findViewById(R.id.search_bar);
 
         input.addTextChangedListener(searchBarWatcher);
@@ -65,9 +71,12 @@ public class MainActivity extends AppCompatActivity {
         search.setEnabled(false);
         search.setOnClickListener(this::onSearch);
         useLocation.setOnClickListener(this::onUseLocation);
+        forecast.setOnClickListener(this::onForecast);
 
         checkLocationPermission();
         createNotificationChannel();
+
+        if (!permissionGranted) setPermissionNeededButtons(false);
     }
 
     @Override
@@ -105,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permissionGranted = true;
+                setPermissionNeededButtons(true);
                 getAndSetLocation();
             }
         }
@@ -150,11 +160,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void onUseLocation(View v) {
-        if (!permissionGranted) {
-            Toast.makeText(this, R.string.location_denied, Toast.LENGTH_SHORT).show();
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private void onForecast(View v) {
+        if (lastClicked != 0 && System.currentTimeMillis() - lastClicked < 60_000) {
+            Toast.makeText(this, R.string.forecast_paused, Toast.LENGTH_SHORT).show();
             return;
         }
+        Intent alarmIntent = new Intent(this, AlertReceiver.class);
+        alarmIntent.putExtra("id", Util.FORECAST_REQUEST_CODE);
+        PendingIntent pendingIntent = PendingIntent
+                .getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        lastClicked = System.currentTimeMillis();
+        alarmManager.set(AlarmManager.RTC, lastClicked, pendingIntent);
+
+    }
+
+    private void onUseLocation(View v) {
         // update location
         saveLocationToPreferences();
         getAndSaveLocationAsync(null);
@@ -266,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeLocationUpdates() {
-        locationManager.removeUpdates(locationListener);
+        if (locationManager != null) locationManager.removeUpdates(locationListener);
     }
 
     private final LocationListener locationListener = new LocationListener() {
@@ -307,6 +331,11 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+    private void setPermissionNeededButtons(boolean isEnabled) {
+        useLocation.setEnabled(isEnabled);
+        forecast.setEnabled(isEnabled);
+    }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
