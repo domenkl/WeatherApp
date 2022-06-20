@@ -1,9 +1,12 @@
 package si.uni_lj.fe.weatherapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -35,6 +38,7 @@ import si.uni_lj.fe.weatherapp.util.NonScrollListView;
 public class WeeklyActivity extends AppCompatActivity {
 
     private OneCallDataModel oneCallDataModel;
+    private String city, country;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,13 +47,15 @@ public class WeeklyActivity extends AppCompatActivity {
         setCurrentDataBinding();
         setHourlyAdapter(convertHourlyData());
         setWeeklyAdapter(convertWeeklyData());
+        NonScrollListView view = findViewById(R.id.weekly_view);
+        view.setOnItemClickListener(this::onItemClick);
     }
 
     private void setCurrentDataBinding() {
         SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
         String oneCallDataString = preferences.getString("oneCallData", "");
-        String city = preferences.getString("savedCity", "");
-        String country = preferences.getString("savedCountry", "");
+        city = preferences.getString("savedCity", "");
+        country = preferences.getString("savedCountry", "");
 
         oneCallDataModel = new Gson().fromJson(oneCallDataString, OneCallDataModel.class);
         ActivityWeeklyBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_weekly);
@@ -102,5 +108,13 @@ public class WeeklyActivity extends AppCompatActivity {
         WeeklyAdapter weeklyAdapter = new WeeklyAdapter(this, R.layout.weekly_layout, weeklyData);
         NonScrollListView weeklyView = findViewById(R.id.weekly_view);
         weeklyView.setAdapter(weeklyAdapter);
+    }
+
+    private void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Intent intent = new Intent(this, DailyActivity.class);
+        intent.putExtra("day", position);
+        intent.putExtra("city", city);
+        intent.putExtra("country", country);
+        startActivity(intent);
     }
 }

@@ -34,7 +34,7 @@ public class DailyData {
         this.day = setDate(data.getDt());
         this.temperature = (int) Math.round(data.getTemperatures().getDay());
         this.icon = data.getWeather().get(0).getIcon();
-        this.precipitation = (int) Math.round(data.getRain() * 100) + "";
+        this.precipitation = (double) Math.round(data.getRain() * 100) / 100 + "";
         this.description = setDescription(data.getWeather().get(0).getDescription());
         this.cloudiness = data.getClouds();
         this.windSpeed = (double) Math.round(data.getWindSpeed() * 36) / 10 + "km/h";
