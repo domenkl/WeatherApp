@@ -59,7 +59,7 @@
                     android:gravity="center"
                     android:paddingBottom="15dp"
                     android:text="@{currentData.country}"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="15sp" />
 
                 <TextView
@@ -72,7 +72,7 @@
                     android:gravity="center"
                     android:paddingBottom="15dp"
                     android:text="@{currentData.city}"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="19sp" />
 
                 <TextView
@@ -85,7 +85,7 @@
                     android:gravity="center"
                     android:paddingBottom="15dp"
                     android:text="@{currentData.localTime}"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="15sp" />
 
                 <TextView
@@ -124,7 +124,7 @@
                         android:fontFamily="@font/inter"
                         android:gravity="center"
                         android:text="@string/precipitation"
-                        android:textColor="@color/black"
+                        android:textColor="@color/weekly_main_font"
                         android:textSize="15sp" />
 
                     <TextView
@@ -146,7 +146,7 @@
                         android:fontFamily="@font/inter"
                         android:gravity="center"
                         android:text="@string/precipitation_unit"
-                        android:textColor="@color/black"
+                        android:textColor="@color/weekly_main_font"
                         android:textSize="15sp" />
                 </LinearLayout>
             </GridLayout>
@@ -162,7 +162,7 @@
                 android:fontFamily="@font/inter"
                 android:gravity="center"
                 android:text="@{currentData.description}"
-                android:textColor="@color/black"
+                android:textColor="@color/weekly_main_font"
                 android:textSize="19sp" />
 
             <GridLayout
@@ -184,7 +184,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@string/cloudiness"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -196,7 +196,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@string/wind"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -208,7 +208,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@string/humidity"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -257,7 +257,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@string/uvi_index"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -269,7 +269,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@string/visibility"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -281,7 +281,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@string/pressure"
-                    android:textColor="@color/black"
+                    android:textColor="@color/weekly_main_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -342,16 +342,17 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/hourly_view_layout"
                 android:layout_centerHorizontal="true"
-                android:paddingVertical="10dp"
+                android:paddingVertical="15dp"
                 android:text="@string/weekly_forecast"
                 android:textAllCaps="true"
+                android:textColor="@color/weekly_main_font"
                 android:textSize="20sp" />
 
             <View
                 style="@style/Divider"
                 android:layout_width="match_parent"
                 android:layout_below="@id/weekly_view_text"
-                android:background="@color/darkGrey" />
+                android:background="@color/weekly_main_font" />
 
             <si.uni_lj.fe.weatherapp.util.NonScrollListView
                 android:id="@+id/weekly_view"

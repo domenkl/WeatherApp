@@ -85,7 +85,7 @@
             android:inputType="text"
             android:textAlignment="center"
             android:minHeight="40dp"
-            android:textColorHint="@color/darkBlue" />
+            android:textColorHint="@color/grey" />
 
         <Button
             android:id="@+id/search"

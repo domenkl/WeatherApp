@@ -321,12 +321,6 @@
                     android:textSize="17sp" />
             </GridLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="600dp"
-                android:layout_below="@id/grid_extra"
-                android:background="@color/main_background" />
-
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>
