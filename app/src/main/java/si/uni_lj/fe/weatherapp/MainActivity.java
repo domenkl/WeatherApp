@@ -262,16 +262,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        Util.makeOneCallRequest(latitude, longitude, callback);
+        if (cityCoordinates == null) Util.makeOneCallRequest(latitude, longitude, callback);
+        else Util.makeOneCallRequest(cityCoordinates.getLatitude(), cityCoordinates.getLongitude(), callback);
     }
 
-    @SuppressLint("ApplySharedPref")
     private void saveOneCallData(String data) {
         SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("oneCallData", data);
         editor.putLong("lastSavedOneCall", System.currentTimeMillis());
-        editor.commit();
+        editor.apply();
     }
 
     private void checkLocationPermission() {
