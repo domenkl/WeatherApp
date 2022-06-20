@@ -220,7 +220,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{currentData.cloudiness + `%`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/weekly_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -232,7 +232,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{currentData.windSpeed}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/weekly_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -245,7 +245,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{currentData.humidity + `%`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/weekly_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -293,7 +293,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{currentData.uviIndex}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/weekly_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -305,7 +305,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{currentData.visibility + `km`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/weekly_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -317,7 +317,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{currentData.pressure + `hPa`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/weekly_secondary_font"
                     android:textSize="17sp" />
             </GridLayout>
 

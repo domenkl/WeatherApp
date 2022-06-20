@@ -22,4 +22,6 @@
     <color name="grey">#9B9B9B</color>
     <color name="green">#1AB534</color>
     <color name="weekly_main_font">#353535</color>
+    <color name="weekly_secondary_font">#257681</color>
+    <color name="daily_secondary_font">#257681</color>
 </resources>

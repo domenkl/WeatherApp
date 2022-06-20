@@ -16,6 +16,7 @@ public class DailyData {
     private final String icon;
     private final String description;
     private final int temperature;
+    private final int minTemperature;
     private final int pressure;
     private final int humidity;
     private final String windSpeed;
@@ -33,6 +34,7 @@ public class DailyData {
         this.sunset = data.getSunset();
         this.day = setDate(data.getDt());
         this.temperature = (int) Math.round(data.getTemperatures().getDay());
+        this.minTemperature = (int) Math.round(data.getTemperatures().getMin());
         this.icon = data.getWeather().get(0).getIcon();
         this.precipitation = (double) Math.round(data.getRain() * 100) / 100 + "";
         this.description = setDescription(data.getWeather().get(0).getDescription());
@@ -78,6 +80,10 @@ public class DailyData {
 
     public int getTemperature() {
         return temperature;
+    }
+
+    public int getMinTemperature() {
+        return minTemperature;
     }
 
     public int getPressure() {

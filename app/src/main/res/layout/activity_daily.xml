@@ -10,7 +10,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:fillViewport="true">
 
         <RelativeLayout
@@ -88,17 +88,38 @@
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/current_temp"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="2"
                     android:layout_gravity="fill"
-                    android:fontFamily="@font/inter"
                     android:gravity="center"
-                    android:text="@{dailyData.temperature + `\u2103`}"
-                    android:textColor="@color/turquoise"
-                    android:textSize="25sp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="@{dailyData.temperature + `\u2103`}"
+                        android:textColor="@color/turquoise"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/min_temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:layout_marginTop="-10dp"
+                        android:text="@{dailyData.minTemperature + `\u2103`}"
+                        android:textColor="@color/weekly_main_font"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/weather_icon"
@@ -135,7 +156,7 @@
                         android:fontFamily="@font/inter"
                         android:gravity="center"
                         android:text="@{dailyData.precipitation}"
-                        android:textColor="@color/turquoise"
+                        android:textColor="@color/daily_secondary_font"
                         android:textSize="25sp" />
 
                     <TextView
@@ -220,7 +241,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{dailyData.cloudiness + `%`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -232,7 +253,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{dailyData.windSpeed}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -245,7 +266,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{dailyData.humidity + `%`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -293,7 +314,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{dailyData.uviIndex}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -305,7 +326,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{dailyData.visibility + `km`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
 
                 <TextView
@@ -317,7 +338,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:text="@{dailyData.pressure + `hPa`}"
-                    android:textColor="@color/turquoise"
+                    android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
             </GridLayout>
 
