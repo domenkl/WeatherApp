@@ -46,4 +46,5 @@
     <string name="channel_id">weatherReport</string>
     <string name="fast_forecast">Hitra napoved</string>
     <string name="forecast_paused">Hitra napoved je na eno minutni pavzi!</string>
+    <string name="notification">Obvestilo</string>
 </resources>

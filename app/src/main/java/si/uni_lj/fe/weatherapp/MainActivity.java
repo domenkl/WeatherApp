@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         search.setEnabled(false);
         search.setOnClickListener(this::onSearch);
         useLocation.setOnClickListener(this::onUseLocation);
-        forecast.setOnClickListener(this::onForecast);
 
         checkLocationPermission();
         createNotificationChannel();
@@ -104,6 +103,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AlertsActivity.class);
             startActivity(intent);
             return true;
+        }
+        else if (itemId == R.id.notify) {
+            sendForecastNotification();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -161,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
-    private void onForecast(View v) {
+    private void sendForecastNotification() {
         if (lastClicked != 0 && System.currentTimeMillis() - lastClicked < 60_000) {
             Toast.makeText(this, R.string.forecast_paused, Toast.LENGTH_SHORT).show();
             return;
