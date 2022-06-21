@@ -23,15 +23,15 @@ public class DailyData {
     private final int cloudiness;
     private final String precipitation;
     private final String uviIndex;
-    private final long sunrise;
-    private final long sunset;
-    private final String visibility;
+    private final String sunrise;
+    private final String sunset;
+    private final int rain;
 
-    public DailyData(DailyInfo data, String city, String country) {
+    public DailyData(DailyInfo data, String city, String country, String timezone) {
         this.city = city;
         this.country = country;
-        this.sunrise = data.getSunrise();
-        this.sunset = data.getSunset();
+        this.sunrise = setTime(data.getSunrise(), timezone);
+        this.sunset = setTime(data.getSunset(), timezone);
         this.day = setDate(data.getDt());
         this.temperature = (int) Math.round(data.getTemperatures().getDay());
         this.minTemperature = (int) Math.round(data.getTemperatures().getMin());
@@ -43,7 +43,7 @@ public class DailyData {
         this.humidity = data.getHumidity();
         this.uviIndex = data.getUvi() + "";
         this.pressure = data.getPressure();
-        this.visibility = "10km";
+        this.rain = (int) (data.getPop() * 100);
     }
 
     private String setDescription(String description) {
@@ -55,6 +55,13 @@ public class DailyData {
         Instant instant = Instant.ofEpochSecond(dt);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("E d.M");
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        return dtf.format(localDateTime);
+    }
+
+    private String setTime(long time, String timezone) {
+        Instant instant = Instant.ofEpochSecond(time);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.of(timezone));
         return dtf.format(localDateTime);
     }
 
@@ -110,15 +117,40 @@ public class DailyData {
         return uviIndex;
     }
 
-    public long getSunrise() {
+    public String getSunrise() {
         return sunrise;
     }
 
-    public long getSunset() {
+    public String getSunset() {
         return sunset;
     }
 
-    public String getVisibility() {
-        return visibility;
+    public int getRain() {
+        return rain;
+    }
+
+    public String getRecommendation() {
+
+        int temperature = getTemperature();
+        int rain = getRain();
+        String temprec = "Uživajte v prijetnem dnevu";
+        //String temprec = null;
+        if (temperature <= 17) {
+            temprec = "Hladno bo, vzemite jakno!";
+        }
+        if (temperature >= 27) {
+            temprec = "Zelo visoke temperature, izogibajte se soncu!";
+        }
+        if (rain > 25) {
+            temprec = "Visoka možnost padavin, vzemite dežnik!";
+        }
+        if (temperature <= 17 && rain > 25) {
+            temprec = "Hladno bo z visoko možnostjo padavin. Ne pozabite jakne ter dežnika!";
+        }
+        if (temperature >= 27 && rain > 25) {
+            temprec = "Visoke temperature ter možnost padavin. Izogibajte se soncu ter imejte s sabo dežnik.";
+        }
+        return temprec;
+
     }
 }

@@ -35,7 +35,7 @@ public class DailyActivity extends AppCompatActivity {
         OneCallDataModel oneCallDataModel = getOneCallDataFromShared();
         DailyInfo dailyInfo = oneCallDataModel.getDaily().get(position);
         ActivityDailyBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_daily);
-        DailyData dailyData = new DailyData(dailyInfo, city, country);
+        DailyData dailyData = new DailyData(dailyInfo, city, country, oneCallDataModel.getTimezone());
         binding.setDailyData(dailyData);
         setImageResource(this, R.id.weather_icon, dailyData.getIcon());
     }

@@ -112,9 +112,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginTop="-10dp"
                         android:fontFamily="@font/inter"
                         android:gravity="center"
-                        android:layout_marginTop="-10dp"
                         android:text="@{dailyData.minTemperature + `\u2103`}"
                         android:textColor="@color/weekly_main_font"
                         android:textSize="20sp" />
@@ -282,14 +282,14 @@
                     android:textSize="17sp" />
 
                 <TextView
-                    android:id="@+id/visibility"
+                    android:id="@+id/rain_prob"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill"
                     android:fontFamily="@font/inter"
                     android:gravity="center"
-                    android:text="@string/visibility"
+                    android:text="@string/rain_prob"
                     android:textColor="@color/black"
                     android:textSize="17sp" />
 
@@ -325,7 +325,7 @@
                     android:layout_gravity="fill"
                     android:fontFamily="@font/inter"
                     android:gravity="center"
-                    android:text="@{dailyData.visibility + `km`}"
+                    android:text="@{dailyData.rain + `%`}"
                     android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
 
@@ -341,6 +341,93 @@
                     android:textColor="@color/daily_secondary_font"
                     android:textSize="17sp" />
             </GridLayout>
+
+            <GridLayout
+                android:id="@+id/grid_sun"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/grid_extra"
+                android:alignmentMode="alignBounds"
+                android:columnCount="2"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:rowCount="2">
+                <TextView
+                    android:id="@+id/sunrise"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:text="@string/sunrise"
+                    android:textColor="@color/black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/sunset"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:text="@string/sunset"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    />
+
+                <TextView
+                    android:id="@+id/sunrise_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:text="@{dailyData.getSunrise}"
+                    android:textColor="@color/turquoise"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/sunset_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:text="@{dailyData.getSunset}"
+                    android:textColor="@color/turquoise"
+                    android:textSize="17sp" />
+            </GridLayout>
+
+            <RelativeLayout
+                android:id="@+id/recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/grid_sun"
+                android:layout_marginLeft="10sp"
+                android:layout_marginTop="20sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginBottom="20sp"
+                android:background="@drawable/rounded_corner">
+
+                <TextView
+                    android:id="@+id/recommend_view_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:layout_marginLeft="10sp"
+                    android:layout_marginTop="20sp"
+                    android:layout_marginRight="10sp"
+                    android:layout_marginBottom="20sp"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:text="@{dailyData.getRecommendation}"
+                    android:textSize="17sp" />
+            </RelativeLayout>
 
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>

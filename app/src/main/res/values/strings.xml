@@ -47,4 +47,7 @@
     <string name="fast_forecast">Hitra napoved</string>
     <string name="forecast_paused">Hitra napoved je na eno minutni pavzi!</string>
     <string name="notification">Obvestilo</string>
+    <string name="rain_prob">Verjetnost dežja</string>
+    <string name="sunset">Sončni zahod</string>
+    <string name="sunrise">Sončni vzhod</string>
 </resources>
