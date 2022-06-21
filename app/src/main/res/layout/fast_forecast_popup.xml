@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_background">
+
+
+        <TextView
+            android:id="@+id/forecast_text"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/ellipse"
+            android:gravity="center"
+            android:text="@string/fast_forecast_text"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/forecast_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/forecast_text"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="5sp"
+            android:layout_marginTop="17sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginBottom="17sp"
+            android:fontFamily="@font/inter"
+            android:text="@null"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/forecast_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/forecast_title"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="5sp"
+            android:layout_marginTop="17sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginBottom="17sp"
+            android:fontFamily="@font/inter"
+            android:text="@null"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/close_forecast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/forecast_description"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/close" />
+
+
+    </RelativeLayout>
+</layout>
