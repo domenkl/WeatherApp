@@ -1,13 +1,13 @@
 package si.uni_lj.fe.weatherapp;
 
 
+import static si.uni_lj.fe.weatherapp.util.ForecastReport.ForecastData;
+import static si.uni_lj.fe.weatherapp.util.ForecastReport.handleWeatherResponse;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,9 +25,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -43,7 +45,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import si.uni_lj.fe.weatherapp.models.Coordinates;
 import si.uni_lj.fe.weatherapp.models.CurrentDataModel;
-import si.uni_lj.fe.weatherapp.services.AlertReceiver;
+import si.uni_lj.fe.weatherapp.util.ForecastReport;
 import si.uni_lj.fe.weatherapp.util.Util;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean savedLocation = false;
     private LocationManager locationManager;
     private Button search, useLocation, forecast;
-    private long lastClicked = 0;
+    private volatile boolean isLocked = false;
+    private static final Object monitor = new Object();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         search.setEnabled(false);
         search.setOnClickListener(this::onSearch);
         useLocation.setOnClickListener(this::onUseLocation);
+        forecast.setOnClickListener(this::onFastForecast);
 
         checkLocationPermission();
         createNotificationChannel();
@@ -103,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AlertsActivity.class);
             startActivity(intent);
             return true;
-        }
-        else if (itemId == R.id.notify) {
+        } else if (itemId == R.id.notify) {
             sendForecastNotification();
         }
         return super.onOptionsItemSelected(item);
@@ -158,32 +161,23 @@ public class MainActivity extends AppCompatActivity {
             removeLocationUpdates();
             String currentCity = currentDataModel.getName();
 
-            getAndSaveLocationAsync(currentCity);
+            getAndSaveLocationAsync(currentCity, true);
         }
     }
 
-    @SuppressLint("UnspecifiedImmutableFlag")
     private void sendForecastNotification() {
-        if (lastClicked != 0 && System.currentTimeMillis() - lastClicked < 60_000) {
-            Toast.makeText(this, R.string.forecast_paused, Toast.LENGTH_SHORT).show();
-            return;
+        try {
+            ForecastData data = handleWeatherResponse(getOneCallStringForForecast(), "");
+            ForecastReport.showNotification(this, 0, data);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        Intent alarmIntent = new Intent(this, AlertReceiver.class);
-        alarmIntent.putExtra("id", Util.FORECAST_REQUEST_CODE);
-        PendingIntent pendingIntent = PendingIntent
-                .getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        lastClicked = System.currentTimeMillis();
-        alarmManager.set(AlarmManager.RTC, lastClicked, pendingIntent);
-
     }
 
     private void onUseLocation(View v) {
         // update location
         saveLocationToPreferences();
-        getAndSaveLocationAsync(null);
+        getAndSaveLocationAsync(null, true);
     }
 
     private void saveLocationToPreferences() {
@@ -195,17 +189,24 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void getAndSaveLocationAsync(String currentCity) {
-        new Thread(() -> getAndSaveLocation(currentCity)).start();
+    private void getAndSaveLocationAsync(String currentCity, boolean start) {
+        Thread thread = new Thread(() -> getAndSaveLocation(currentCity, start));
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void getAndSaveLocation(String currentCity) {
+    private void getAndSaveLocation(String currentCity, boolean start) {
         String currentCountry = null;
         try {
             Locale.setDefault(new Locale("en", "US"));
             Address address;
             if (cityCoordinates == null) address = getAddressFromCoordinates(latitude, longitude);
-            else address = getAddressFromCoordinates(cityCoordinates.getLatitude(), cityCoordinates.getLongitude());
+            else
+                address = getAddressFromCoordinates(cityCoordinates.getLatitude(), cityCoordinates.getLongitude());
             currentCountry = address.getCountryCode();
             String addressCity = address.getLocality() != null ? address.getLocality() : address.getAdminArea();
             currentCity = currentCity != null ? currentCity : addressCity;
@@ -218,10 +219,11 @@ public class MainActivity extends AppCompatActivity {
 
         boolean shouldSave = shouldSaveCityAndCountry(currentCity, currentCountry);
         if (shouldSave) {
-            saveOneCallData();
+            isLocked = true;
+            saveOneCallData(start);
             return;
         }
-        startWeeklyActivity();
+        if (start) startWeeklyActivity();
     }
 
     private Address getAddressFromCoordinates(double lat, double lon) throws IOException {
@@ -246,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void saveOneCallData() {
+    private void saveOneCallData(boolean start) {
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -258,12 +260,14 @@ public class MainActivity extends AppCompatActivity {
                 if (response.body() != null) {
                     String oneCallData = response.body().string();
                     saveOneCallData(oneCallData);
-                    runOnUiThread(() -> startWeeklyActivity());
+                    if (start) runOnUiThread(() -> startWeeklyActivity());
+
                 }
             }
         };
         if (cityCoordinates == null) Util.makeOneCallRequest(latitude, longitude, callback);
-        else Util.makeOneCallRequest(cityCoordinates.getLatitude(), cityCoordinates.getLongitude(), callback);
+        else
+            Util.makeOneCallRequest(cityCoordinates.getLatitude(), cityCoordinates.getLongitude(), callback);
     }
 
     private void saveOneCallData(String data) {
@@ -272,6 +276,44 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("oneCallData", data);
         editor.putLong("lastSavedOneCall", System.currentTimeMillis());
         editor.apply();
+        isLocked = false;
+        synchronized(monitor) {
+            monitor.notifyAll();
+        }
+    }
+
+    private void onFastForecast(View view) {
+        try {
+            ForecastData data = handleWeatherResponse(getOneCallStringForForecast(), "");
+
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            View addAlertView = getLayoutInflater().inflate(R.layout.fast_forecast_popup, null);
+            dialogBuilder.setView(addAlertView);
+
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
+
+            ((TextView) addAlertView.findViewById(R.id.forecast_title)).setText(data.getTitle());
+            ((TextView) addAlertView.findViewById(R.id.forecast_description)).setText(data.getBigText());
+            addAlertView.findViewById(R.id.close_forecast).setOnClickListener(l -> dialog.dismiss());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getOneCallStringForForecast() {
+        getAndSaveLocationAsync(null, false);
+        while (isLocked) {
+            synchronized (monitor) {
+                try {
+                    monitor.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        SharedPreferences preferences = getSharedPreferences("savedWeatherData", MODE_PRIVATE);
+        return preferences.getString("oneCallData", "");
     }
 
     private void checkLocationPermission() {
